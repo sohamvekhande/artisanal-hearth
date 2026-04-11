@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Artisanal Hearth</title>
+<link href="output.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<style>
+ * { box-sizing:border-box; }
+ .material-symbols-outlined { font-family: 'Material Symbols Outlined'; font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 24; display: inline-flex; align-items: center; justify-content: center; }
+ .fill-icon { font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24; }
+ .editorial-shadow { box-shadow:0 40px 60px -15px rgba(39,25,3,0.07); }
+ .soft-shadow { box-shadow:0 8px 32px rgba(39,25,3,0.06); }
+ #loader { transition:opacity 0.8s ease-out,visibility 0.8s; }
+ #loader.fade-out { opacity:0; visibility:hidden; }
+ @keyframes loader-slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(250%)} }
+ .loader-bar { animation:loader-slide 1.4s infinite ease-in-out; }
+ .page { display:none; animation:pageIn 0.45s cubic-bezier(0.22,1,0.36,1) both; }
+ .page.active { display:block; }
+ @keyframes pageIn { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+ .reveal { opacity:0; transform:translateY(30px); transition:opacity 0.7s ease,transform 0.7s ease; }
+ .reveal.visible { opacity:1; transform:translateY(0); }
+ .nav-link { position:relative; }
+ .nav-link.active { color:#572728 !important; }
+ .nav-link.active::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px; background:#572728; border-radius:2px; }
+ .tab-btn.active { background:#572728; color:#fff; }
+ .menu-item { display:none; }
+ .menu-item.show { display:block; }
+ #cart-badge { display:none; }
+ #cart-badge.visible { display:flex; }
+ #mobile-menu { transition:transform 0.3s ease,opacity 0.3s ease; transform:translateY(-10px); opacity:0; pointer-events:none; }
+ #mobile-menu.open { transform:translateY(0); opacity:1; pointer-events:all; }
+ html { scroll-behavior:smooth; }
+ .tabs-scroll { scrollbar-width:none; }
+ .tabs-scroll::-webkit-scrollbar { display:none; }
+ .star { color:#e9c46a; }
+ .grain::after { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events:none; z-index:1; border-radius:inherit; }
+ @keyframes float { 0%,100%{transform:rotate(3deg) translateY(0)} 50%{transform:rotate(3deg) translateY(-8px)} }
+ .float-card { animation:float 6s ease-in-out infinite; }
+ .hover-unrotate:hover { transform:rotate(0deg) !important; transition:transform 0.7s ease !important; }
+ .qty-btn:hover { background:rgba(87,39,40,0.08); }
+ .hearth-input:focus { outline:none; box-shadow:0 0 0 2px rgba(121,87,62,0.2); }
+ @keyframes checkPop { 0%{transform:scale(0)} 70%{transform:scale(1.2)} 100%{transform:scale(1)} }
+ .check-pop { animation:checkPop 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both; }
+ .field-error { border:1px solid #ba1a1a !important; }
+ .error-msg { color:#ba1a1a; font-size:0.7rem; margin-top:0.25rem; display:none; }
+ .error-msg.show { display:block; }
+ /* Admin Panel */
+ .admin-tab { cursor:pointer; padding:0.5rem 1rem; border-radius:0.5rem; font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; transition:all 0.2s; }
+ .admin-tab.active { background:#572728; color:#fff; }
+ .admin-tab:not(.active) { color:#79573e; }
+ .admin-tab:not(.active):hover { background:#fff1e3; }
+ .status-badge { padding:2px 10px; border-radius:9999px; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; }
+ .status-pending { background:#ffd1b1; color:#79573e; }
+ .status-preparing { background:#fde68a; color:#92400e; }
+ .status-ready  { background:#bbf7d0; color:#166534; }
+ .status-delivered { background:#e0f2fe; color:#0369a1; }
+ .status-cancelled { background:#fee2e2; color:#991b1b; }
+ .status-confirmed { background:#bbf7d0; color:#166534; }
+ .status-completed { background:#e0f2fe; color:#0369a1; }
+ /* Honeypot — visually hidden, accessible to bots */
+ .honeypot-field { position:absolute; left:-9999px; top:-9999px; opacity:0; pointer-events:none; tab-index:-1; }
+</style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container overflow-x-hidden">
+
+<!-- ===== LOADER ===== -->
+<div id="loader" class="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#fff8f3]">
+ <div class="flex flex-col items-center gap-6">
+ <div class="relative">
+  <div class="w-20 h-20 rounded-full bg-surface-container-low flex items-center justify-center">
+  <span class="material-symbols-outlined text-primary" style="font-size:40px">coffee</span>
+  </div>
+  <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+  <span class="material-symbols-outlined text-white" style="font-size:14px">local_fire_department</span>
+  </div>
+ </div>
+ <span class="font-headline text-2xl font-bold text-primary tracking-tight">The Artisanal Hearth</span>
+ <div class="h-0.5 w-32 bg-primary/10 relative overflow-hidden rounded-full">
+  <div class="absolute inset-y-0 left-0 w-1/2 bg-primary rounded-full loader-bar"></div>
+ </div>
+ <span class="font-label text-xs uppercase tracking-[0.2em] text-secondary opacity-60">Crafting your experience</span>
+ </div>
+</div>
+
+<!-- ===== NAV ===== -->
+<nav class="fixed top-0 w-full z-50 bg-[#fff8f3]/85 backdrop-blur-xl shadow-sm shadow-[#271903]/5">
+ <div class="flex justify-between items-center max-w-7xl mx-auto px-6 md:px-8 h-20">
+ <button data-page="home" class="font-headline text-2xl font-bold text-primary hover:opacity-80 transition-opacity tracking-tight">The Artisanal Hearth</button>
+ <div class="hidden lg:flex items-center gap-8">
+  <button class="nav-link font-headline italic text-lg tracking-tight text-secondary hover:text-primary transition-colors duration-200" data-page="home">Home</button>
+  <button class="nav-link font-headline italic text-lg tracking-tight text-secondary hover:text-primary transition-colors duration-200" data-page="menu">Menu</button>
+  <button class="nav-link font-headline italic text-lg tracking-tight text-secondary hover:text-primary transition-colors duration-200" data-page="order">Order</button>
+  <button class="nav-link font-headline italic text-lg tracking-tight text-secondary hover:text-primary transition-colors duration-200" data-page="reservation">Reservation</button>
+  <button class="nav-link font-headline italic text-lg tracking-tight text-secondary hover:text-primary transition-colors duration-200" data-page="about">About</button>
+  <button class="nav-link font-headline italic text-lg tracking-tight text-secondary hover:text-primary transition-colors duration-200" data-page="contact">Contact</button>
+ </div>
+ <div class="flex items-center gap-3">
+  <button data-page="order" class="relative">
+  <span class="material-symbols-outlined text-primary">shopping_bag</span>
+  <span id="cart-badge" class="absolute -top-1.5 -right-1.5 w-4 h-4 bg-primary text-white text-[9px] font-bold rounded-full items-center justify-center">0</span>
+  </button>
+  <button data-page="order" class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label font-semibold hover:opacity-85 active:scale-95 transition-all text-sm hidden lg:block">Order Now</button>
+  <button id="mobile-menu-toggle" class="lg:hidden p-2 text-primary">
+  <span class="material-symbols-outlined" id="menu-icon">menu</span>
+  </button>
+ </div>
+ </div>
+ <div id="mobile-menu" class="lg:hidden absolute top-full left-0 right-0 bg-[#fff8f3]/95 backdrop-blur-xl border-t border-outline-variant/20 px-6 py-4 space-y-1">
+ <button data-page="home" class="block w-full text-left font-headline italic text-lg text-secondary hover:text-primary py-2 transition-colors">Home</button>
+ <button data-page="menu" class="block w-full text-left font-headline italic text-lg text-secondary hover:text-primary py-2 transition-colors">Menu</button>
+ <button data-page="order" class="block w-full text-left font-headline italic text-lg text-secondary hover:text-primary py-2 transition-colors">Order</button>
+ <button data-page="reservation" class="block w-full text-left font-headline italic text-lg text-secondary hover:text-primary py-2 transition-colors">Reservation</button>
+ <button data-page="about" class="block w-full text-left font-headline italic text-lg text-secondary hover:text-primary py-2 transition-colors">About</button>
+ <button data-page="contact" class="block w-full text-left font-headline italic text-lg text-secondary hover:text-primary py-2 transition-colors">Contact</button>
+ </div>
+</nav>
+
+<!-- ============================= HOME PAGE ============================= -->
+<div id="page-home" class="page">
+ <header class="relative pt-20 overflow-hidden min-h-screen flex items-center">
+ <div class="max-w-7xl mx-auto px-6 md:px-8 py-20 md:py-28 grid grid-cols-1 md:grid-cols-12 items-center gap-12 w-full">
+  <div class="md:col-span-7 z-10 reveal">
+  <span class="inline-block font-label text-sm uppercase tracking-[0.18em] text-secondary mb-5 opacity-80">Established 2024 · Bandra, Mumbai</span>
+  <h1 class="font-headline text-6xl md:text-8xl text-primary leading-[1.05] mb-6">The Artisanal<br/><span class="italic font-light">Hearth</span></h1>
+  <p class="font-headline italic text-xl md:text-2xl text-on-surface-variant mb-10 max-w-lg leading-relaxed">Where every cup tells a story, and every moment is crafted with intention.</p>
+  <div class="flex flex-wrap gap-4">
+   <button id="orderBtn" data-page="order" class="bg-primary text-on-primary px-8 py-4 rounded-full font-label font-semibold text-base hover:opacity-85 active:scale-95 transition-all shadow-lg shadow-primary/15">Order Now</button>
+   <button id="menuBtn" data-page="menu" class="border-2 border-outline-variant text-primary px-8 py-4 rounded-full font-label font-semibold text-base hover:bg-surface-container-low transition-colors">View Menu</button>
+  </div>
+  </div>
+  <div class="md:col-span-5 relative reveal" style="animation-delay:0.15s">
+  <div class="aspect-[4/5] rounded-xl overflow-hidden editorial-shadow float-card hover-unrotate relative grain">
+   <img alt="Cosy cafe interior" class="w-full h-full object-cover" src="assets/cafe_interior.jpg"/>
+  </div>
+  <div class="absolute -bottom-6 -left-6 bg-surface-container-high p-6 rounded-xl editorial-shadow hidden md:block max-w-[260px] z-10">
+   <p class="font-headline italic text-base text-primary leading-snug">"The perfect refuge from Mumbai's bustling streets."</p>
+   <p class="font-label text-[10px] uppercase tracking-wider mt-2 text-secondary opacity-80">— Priya Sharma, Food Blogger</p>
+  </div>
+  </div>
+ </div>
+ <div class="absolute top-0 right-0 w-1/3 h-full bg-surface-container-low -z-10 hidden md:block"></div>
+ </header>
+
+ <!-- The Hearth Standard -->
+ <section class="py-24 bg-surface">
+ <div class="max-w-7xl mx-auto px-6 md:px-8">
+  <div class="mb-14 reveal">
+  <span class="font-label text-xs uppercase tracking-[0.18em] text-secondary opacity-70">Our promise</span>
+  <h2 class="font-headline text-4xl md:text-5xl text-primary mt-2 mb-3">The Hearth Standard</h2>
+  <div class="h-1 w-16 bg-primary/20 rounded-full"></div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+  <div class="bg-surface-container-low p-10 rounded-3xl flex flex-col items-start hover:bg-surface-container-high transition-colors duration-500 reveal soft-shadow">
+   <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-8 text-2xl">☕</div>
+   <h3 class="font-headline text-2xl text-primary mb-4">Ethical Quality</h3>
+   <p class="text-on-surface-variant leading-relaxed text-sm">We source our beans from sustainable micro-lots across Coorg, Chikmagalur, and Araku Valley — preserving the distinct soul of each Indian origin.</p>
+  </div>
+  <div class="bg-surface-container p-10 rounded-3xl flex flex-col items-start hover:bg-surface-container-highest transition-colors duration-500 md:translate-y-8 reveal soft-shadow" style="animation-delay:0.1s">
+   <div class="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center mb-8 text-2xl">🌾</div>
+   <h3 class="font-headline text-2xl text-primary mb-4">Rooted Locally</h3>
+   <p class="text-on-surface-variant leading-relaxed text-sm">Our baked goods and seasonal ingredients are sourced from family farms and local artisans within Maharashtra.</p>
+  </div>
+  <div class="bg-surface-container-low p-10 rounded-3xl flex flex-col items-start hover:bg-surface-container-high transition-colors duration-500 reveal soft-shadow" style="animation-delay:0.2s">
+   <div class="w-14 h-14 rounded-full bg-tertiary/10 flex items-center justify-center mb-8 text-2xl">🛋️</div>
+   <h3 class="font-headline text-2xl text-primary mb-4">Tactile Comfort</h3>
+   <p class="text-on-surface-variant leading-relaxed text-sm">Designed for slow-living. From the acoustics to the ambient lighting, every detail invites you to linger just a little longer.</p>
+  </div>
+  </div>
+ </div>
+ </section>
+
+ <!-- Signature Selections -->
+ <section class="py-24 bg-surface-container-low overflow-hidden">
+ <div class="max-w-7xl mx-auto px-6 md:px-8">
+  <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-4 reveal">
+  <div>
+   <span class="font-label text-xs uppercase tracking-[0.18em] text-secondary opacity-70">Seasonal Curation</span>
+   <h2 class="font-headline text-4xl md:text-5xl text-primary mt-2">Signature Selections</h2>
+  </div>
+  <button data-page="menu" class="text-primary font-label font-semibold border-b-2 border-primary/30 pb-1 hover:border-primary transition-colors text-sm">Explore Full Menu →</button>
+  </div>
+  <div class="space-y-20">
+  <div class="flex flex-col md:flex-row items-center gap-12 group reveal">
+   <div class="w-full md:w-1/2">
+   <div class="aspect-[16/9] rounded-3xl overflow-hidden editorial-shadow group-hover:scale-[1.02] transition-transform duration-700">
+    <img alt="Hearth Smoked Latte" class="w-full h-full object-cover" src="assets/hearth_smoked_latte.jpg"/>
+   </div>
+   </div>
+   <div class="w-full md:w-1/2">
+   <div class="inline-block bg-tertiary-container px-4 py-1 rounded-full mb-4"><span class="font-headline text-on-tertiary-container text-sm italic">Smoky, Velvety, Rich</span></div>
+   <h3 class="font-headline text-4xl text-primary mb-4">Hearth Smoked Latte</h3>
+   <p class="text-on-surface-variant leading-relaxed mb-6">Cold-smoked Chikmagalur espresso with house-made oat milk, a whisper of cardamom smoke, and a silk of muscovado. This is the signature you'll return for.</p>
+   <div class="flex items-center justify-between">
+    <span class="font-headline text-3xl text-primary">₹180</span>
+    <button data-add-to-cart data-name="Hearth Smoked Latte" data-price="180" class="bg-primary text-on-primary px-6 py-3 rounded-full font-label font-semibold text-sm hover:opacity-85 active:scale-95 transition-all">Add to Cart</button>
+   </div>
+   </div>
+  </div>
+  <div class="flex flex-col md:flex-row-reverse items-center gap-12 group reveal">
+   <div class="w-full md:w-1/2">
+   <div class="aspect-[16/9] rounded-3xl overflow-hidden editorial-shadow group-hover:scale-[1.02] transition-transform duration-700">
+    <img alt="Masala French Toast" class="w-full h-full object-cover" src="assets/masala_frech_toast.jpg"/>
+   </div>
+   </div>
+   <div class="w-full md:w-1/2">
+   <div class="inline-block bg-secondary-container px-4 py-1 rounded-full mb-4"><span class="font-headline text-on-secondary-container text-sm italic">Spiced, Golden, Warm</span></div>
+   <h3 class="font-headline text-4xl text-primary mb-4">Masala French Toast</h3>
+   <p class="text-on-surface-variant leading-relaxed mb-6">Thick brioche soaked in saffron-cardamom custard, griddled golden with ghee, topped with rose jam and crushed pistachios. A Hearth morning classic.</p>
+   <div class="flex items-center justify-between">
+    <span class="font-headline text-3xl text-primary">₹170</span>
+    <button data-add-to-cart data-name="Masala French Toast" data-price="170" class="bg-primary text-on-primary px-6 py-3 rounded-full font-label font-semibold text-sm hover:opacity-85 active:scale-95 transition-all">Add to Cart</button>
+   </div>
+   </div>
+  </div>
+  </div>
+ </div>
+ </section>
+
+ <!-- Testimonials -->
+ <section class="py-24 bg-surface">
+ <div class="max-w-7xl mx-auto px-6 md:px-8">
+  <div class="mb-14 reveal">
+  <span class="font-label text-xs uppercase tracking-[0.18em] text-secondary opacity-70">Voices</span>
+  <h2 class="font-headline text-4xl md:text-5xl text-primary mt-2">What Our Guests Say</h2>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+  <div class="bg-surface-container-low p-8 rounded-3xl soft-shadow reveal">
+   <div class="flex gap-1 mb-4">
+   <span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span><span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span><span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span><span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span><span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span>
+   </div>
+   <p class="font-headline italic text-lg text-primary leading-relaxed mb-6">"The Smoked Latte is unlike anything I've had in Mumbai. The cardamom note is just perfect."</p>
+   <div class="flex items-center gap-3">
+   <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center font-headline text-primary font-bold">P</div>
+   <div><p class="font-label font-semibold text-sm text-on-surface">Priya Sharma</p><p class="font-label text-xs text-secondary opacity-70">Food Writer, Mumbai</p></div>
+   </div>
+  </div>
+  <div class="bg-surface-container p-8 rounded-3xl soft-shadow reveal md:translate-y-6" style="animation-delay:0.1s">
+   <div class="flex gap-1 mb-4">
+   <span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span><span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span><span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span><span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span><span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span>
+   </div>
+   <p class="font-headline italic text-lg text-primary leading-relaxed mb-6">"Brought my parents here for Sunday brunch. The ambiance and the filter coffee transported us to Coorg."</p>
+   <div class="flex items-center gap-3">
+   <div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center font-headline text-secondary font-bold">R</div>
+   <div><p class="font-label font-semibold text-sm text-on-surface">Rahul Verma</p><p class="font-label text-xs text-secondary opacity-70">Architect, Pune</p></div>
+   </div>
+  </div>
+  <div class="bg-surface-container-low p-8 rounded-3xl soft-shadow reveal" style="animation-delay:0.2s">
+   <div class="flex gap-1 mb-4">
+   <span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span><span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span><span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span><span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span><span class="star material-symbols-outlined fill-icon" style="font-size:18px">star</span>
+   </div>
+   <p class="font-headline italic text-lg text-primary leading-relaxed mb-6">"Best chai latte in Bandra. Ananya at the counter remembered my usual order by my third visit!"</p>
+   <div class="flex items-center gap-3">
+   <div class="w-10 h-10 rounded-full bg-tertiary/10 flex items-center justify-center font-headline text-tertiary font-bold">M</div>
+   <div><p class="font-label font-semibold text-sm text-on-surface">Meera Iyer</p><p class="font-label text-xs text-secondary opacity-70">Designer, Mumbai</p></div>
+   </div>
+  </div>
+  </div>
+ </div>
+ </section>
+
+ <footer class="bg-[#271903] py-10">
+ <div class="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+  <span class="font-headline text-xl text-[#fff8f3]">The Artisanal Hearth</span>
+  <p class="font-label text-xs uppercase tracking-widest text-[#d7ccc8] opacity-60">© 2024 — Crafted for Slow Living</p>
+ </div>
+ </footer>
+</div>
+
+<!-- ============================= MENU PAGE ============================= -->
+<div id="page-menu" class="page">
+ <main class="pt-28 pb-20">
+ <div class="max-w-7xl mx-auto px-6 md:px-8 mb-12 reveal">
+  <span class="font-label text-xs uppercase tracking-[0.18em] text-secondary opacity-70 mb-2 block">Everything we craft</span>
+  <h1 class="font-headline text-5xl md:text-6xl text-primary italic">Our Menu</h1>
+ </div>
+ <!-- Search + Tabs -->
+ <div class="max-w-7xl mx-auto px-6 md:px-8 mb-10 flex flex-col md:flex-row items-start md:items-center gap-4">
+  <div class="relative flex-grow max-w-sm">
+  <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline opacity-50 pointer-events-none" style="font-size:20px">search</span>
+  <input id="menu-search" type="text" placeholder="Search menu…" class="w-full bg-surface-container-low border-none rounded-full h-11 pl-10 pr-4 text-sm hearth-input placeholder:text-outline-variant"/>
+  </div>
+  <div class="flex gap-2 tabs-scroll overflow-x-auto pb-1">
+  <button data-tab="coffee" class="tab-btn active px-5 py-2 rounded-full text-sm font-label font-semibold transition-all whitespace-nowrap">Coffee</button>
+  <button data-tab="food" class="tab-btn bg-surface-container-high text-on-secondary-container px-5 py-2 rounded-full text-sm font-label font-semibold transition-all whitespace-nowrap">Food</button>
+  <button data-tab="desserts" class="tab-btn bg-surface-container-high text-on-secondary-container px-5 py-2 rounded-full text-sm font-label font-semibold transition-all whitespace-nowrap">Desserts</button>
+  <button data-tab="tea" class="tab-btn bg-surface-container-high text-on-secondary-container px-5 py-2 rounded-full text-sm font-label font-semibold transition-all whitespace-nowrap">Tea &amp; Tonics</button>
+  </div>
+ </div>
+ <div class="max-w-7xl mx-auto px-6 md:px-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
+
+  <!-- COFFEE -->
+  <div class="group menu-item" data-cat="coffee" data-name="hearth smoked latte">
+  <div class="bg-surface-container-lowest rounded-4xl overflow-hidden flex flex-col h-full editorial-shadow transition-all duration-500 hover:-translate-y-2">
+   <div class="h-56 bg-surface-container-high overflow-hidden"><img alt="Hearth Smoked Latte" class="w-full h-full object-cover" src="assets/hearth_smoked_latte.jpg"/></div>
+   <div class="p-7 flex flex-col flex-grow justify-between">
+   <div>
+    <div class="flex justify-between items-start mb-2">
+    <h3 class="font-headline text-xl text-primary">Hearth Smoked Latte</h3>
+    <span class="font-label text-base text-secondary ml-3">₹180</span>
+    </div>
+    <p class="text-on-surface-variant text-xs leading-relaxed mb-5">Cold-smoked Chikmagalur espresso with house oat milk and a whisper of cardamom smoke.</p>
+   </div>
+   <button data-add-to-cart data-name="Hearth Smoked Latte" data-price="180" class="w-full border-2 border-primary/15 text-primary py-3 rounded-full font-label font-bold hover:bg-primary hover:text-on-primary active:scale-95 transition-all text-sm">Add to Cart</button>
+   </div>
+  </div>
+  </div>
+
+  <div class="group menu-item" data-cat="coffee" data-name="coorg cold brew tonic">
+  <div class="bg-surface-container-lowest rounded-4xl overflow-hidden flex flex-col h-full editorial-shadow transition-all duration-500 hover:-translate-y-2">
+   <div class="h-56 bg-surface-container-high overflow-hidden"><img alt="Coorg Cold Brew Tonic" class="w-full h-full object-cover" src="assets/cold_brew.jpg"/></div>
+   <div class="p-7 flex flex-col flex-grow justify-between">
+   <div>
+    <div class="flex justify-between items-start mb-2">
+    <h3 class="font-headline text-xl text-primary">Coorg Cold Brew Tonic</h3>
+    <span class="font-label text-base text-secondary ml-3">₹160</span>
+    </div>
+    <p class="text-on-surface-variant text-xs leading-relaxed mb-5">18-hour cold-brew over sparkling tonic with a sliver of orange peel and black salt rim.</p>
+   </div>
+   <button data-add-to-cart data-name="Coorg Cold Brew Tonic" data-price="160" class="w-full border-2 border-primary/15 text-primary py-3 rounded-full font-label font-bold hover:bg-primary hover:text-on-primary active:scale-95 transition-all text-sm">Add to Cart</button>
+   </div>
+  </div>
+  </div>
+
+  <div class="group menu-item" data-cat="coffee" data-name="araku filter coffee">
+  <div class="bg-surface-container-lowest rounded-4xl overflow-hidden flex flex-col h-full editorial-shadow transition-all duration-500 hover:-translate-y-2">
+   <div class="h-56 bg-surface-container-high overflow-hidden"><img alt="Araku Filter Coffee" class="w-full h-full object-cover" src="assets/araku_filter_coffe.jpg"/></div>
+   <div class="p-7 flex flex-col flex-grow justify-between">
+   <div>
+    <div class="flex justify-between items-start mb-2">
+    <h3 class="font-headline text-xl text-primary">Araku Filter Coffee</h3>
+    <span class="font-label text-base text-secondary ml-3">₹90</span>
+    </div>
+    <p class="text-on-surface-variant text-xs leading-relaxed mb-5">Tribal estate Araku Valley beans, traditional drip-filter, topped with micro-foam of farm milk.</p>
+   </div>
+   <button data-add-to-cart data-name="Araku Filter Coffee" data-price="90" class="w-full border-2 border-primary/15 text-primary py-3 rounded-full font-label font-bold hover:bg-primary hover:text-on-primary active:scale-95 transition-all text-sm">Add to Cart</button>
+   </div>
+  </div>
+  </div>
+
+  <div class="group menu-item" data-cat="coffee" data-name="golden hour latte">
+  <div class="bg-surface-container-lowest rounded-4xl overflow-hidden flex flex-col h-full editorial-shadow transition-all duration-500 hover:-translate-y-2">
+   <div class="h-56 bg-surface-container-high overflow-hidden"><img alt="Golden Hour Latte" class="w-full h-full object-cover" src="assets/golden_hour_latte.jpg"/></div>
+   <div class="p-7 flex flex-col flex-grow justify-between">
+   <div>
+    <div class="flex justify-between items-start mb-2">
+    <h3 class="font-headline text-xl text-primary">Golden Hour Latte</h3>
+    <span class="font-label text-base text-secondary ml-3">₹150</span>
+    </div>
+    <p class="text-on-surface-variant text-xs leading-relaxed mb-5">Haldi, ginger, ashwagandha, and steamed oat milk. India's ancient wellness, reimagined.</p>
+   </div>
+   <button data-add-to-cart data-name="Golden Hour Latte" data-price="150" class="w-full border-2 border-primary/15 text-primary py-3 rounded-full font-label font-bold hover:bg-primary hover:text-on-primary active:scale-95 transition-all text-sm">Add to Cart</button>
+   </div>
+  </div>
+  </div>
+
+  <!-- FOOD -->
+  <div class="group menu-item" data-cat="food" data-name="masala french toast" style="display:none">
+  <div class="bg-surface-container-lowest rounded-4xl overflow-hidden flex flex-col h-full editorial-shadow transition-all duration-500 hover:-translate-y-2">
+   <div class="h-56 bg-surface-container-high overflow-hidden"><img alt="Masala French Toast" class="w-full h-full object-cover" src="assets/masala_frech_toast.jpg"/></div>
+   <div class="p-7 flex flex-col flex-grow justify-between">
+   <div>
+    <div class="flex justify-between items-start mb-2">
+    <h3 class="font-headline text-xl text-primary">Masala French Toast</h3>
+    <span class="font-label text-base text-secondary ml-3">₹170</span>
+    </div>
+    <p class="text-on-surface-variant text-xs leading-relaxed mb-5">Saffron-cardamom brioche, ghee-griddled, with rose jam and crushed pistachios.</p>
+   </div>
+   <button data-add-to-cart data-name="Masala French Toast" data-price="170" class="w-full border-2 border-primary/15 text-primary py-3 rounded-full font-label font-bold hover:bg-primary hover:text-on-primary active:scale-95 transition-all text-sm">Add to Cart</button>
+   </div>
+  </div>
+  </div>
+
+  <div class="group menu-item" data-cat="food" data-name="avocado achari toast" style="display:none">
+  <div class="bg-surface-container-lowest rounded-4xl overflow-hidden flex flex-col h-full editorial-shadow transition-all duration-500 hover:-translate-y-2">
+   <div class="h-56 bg-surface-container-high overflow-hidden"><img alt="Avocado Achari Toast" class="w-full h-full object-cover" src="assets/Avocado_Achari_toast.jpg"/></div>
+   <div class="p-7 flex flex-col flex-grow justify-between">
+   <div>
+    <div class="flex justify-between items-start mb-2">
+    <h3 class="font-headline text-xl text-primary">Avocado Achari Toast</h3>
+    <span class="font-label text-base text-secondary ml-3">₹190</span>
+    </div>
+    <p class="text-on-surface-variant text-xs leading-relaxed mb-5">Multigrain sourdough, spiced avocado mash with achari seasoning, microgreens, and chaat masala.</p>
+   </div>
+   <button data-add-to-cart data-name="Avocado Achari Toast" data-price="190" class="w-full border-2 border-primary/15 text-primary py-3 rounded-full font-label font-bold hover:bg-primary hover:text-on-primary active:scale-95 transition-all text-sm">Add to Cart</button>
+   </div>
+  </div>
+  </div>
+
+  <div class="group menu-item" data-cat="food" data-name="banana walnut bread" style="display:none">
+  <div class="bg-surface-container-lowest rounded-4xl overflow-hidden flex flex-col h-full editorial-shadow transition-all duration-500 hover:-translate-y-2">
+   <div class="h-56 bg-surface-container-high overflow-hidden"><img alt="Banana Walnut Bread" class="w-full h-full object-cover" src="assets/banana_walnut_bread.jpg"/></div>
+   <div class="p-7 flex flex-col flex-grow justify-between">
+   <div>
+    <div class="flex justify-between items-start mb-2">
+    <h3 class="font-headline text-xl text-primary">Banana Walnut Bread</h3>
+    <span class="font-label text-base text-secondary ml-3">₹120</span>
+    </div>
+    <p class="text-on-surface-variant text-xs leading-relaxed mb-5">Ripe Nendran banana loaf with roasted walnuts. Warm from the oven, served with clotted cream.</p>
+   </div>
+   <button data-add-to-cart data-name="Banana Walnut Bread" data-price="120" class="w-full border-2 border-primary/15 text-primary py-3 rounded-full font-label font-bold hover:bg-primary hover:text-on-primary active:scale-95 transition-all text-sm">Add to Cart</button>
+   </div>
+  </div>
+  </div>
+
+  <!-- DESSERTS -->
+  <div class="group menu-item" data-cat="desserts" data-name="mishti doi cheesecake" style="display:none">
+  <div class="bg-surface-container-lowest rounded-4xl overflow-hidden flex flex-col h-full editorial-shadow transition-all duration-500 hover:-translate-y-2">
+   <div class="h-56 bg-surface-container-high overflow-hidden"><img alt="Mishti Doi Cheesecake" class="w-full h-full object-cover" src="assets/Mishti_dohi.jpg"/></div>
+   <div class="p-7 flex flex-col flex-grow justify-between">
+   <div>
+    <div class="flex justify-between items-start mb-2">
+    <h3 class="font-headline text-xl text-primary">Mishti Doi Cheesecake</h3>
+    <span class="font-label text-base text-secondary ml-3">₹180</span>
+    </div>
+    <p class="text-on-surface-variant text-xs leading-relaxed mb-5">Basque-style burnt cheesecake infused with mishti doi, finished with jaggery caramel and sea salt.</p>
+   </div>
+   <button data-add-to-cart data-name="Mishti Doi Cheesecake" data-price="180" class="w-full border-2 border-primary/15 text-primary py-3 rounded-full font-label font-bold hover:bg-primary hover:text-on-primary active:scale-95 transition-all text-sm">Add to Cart</button>
+   </div>
+  </div>
+  </div>
+
+  <div class="group menu-item" data-cat="desserts" data-name="kesar pista financier" style="display:none">
+  <div class="bg-surface-container-lowest rounded-4xl overflow-hidden flex flex-col h-full editorial-shadow transition-all duration-500 hover:-translate-y-2">
+   <div class="h-56 bg-surface-container-high overflow-hidden"><img alt="Kesar Pista Financier" class="w-full h-full object-cover" src="assets/Kesar_Pista_Financier.jpg"/></div>
+   <div class="p-7 flex flex-col flex-grow justify-between">
+   <div>
+    <div class="flex justify-between items-start mb-2">
+    <h3 class="font-headline text-xl text-primary">Kesar Pista Financier</h3>
+    <span class="font-label text-base text-secondary ml-3">₹130</span>
+    </div>
+    <p class="text-on-surface-variant text-xs leading-relaxed mb-5">Brown butter almond cake with Kashmiri saffron and pistachio cream centre. A Hearth classic.</p>
+   </div>
+   <button data-add-to-cart data-name="Kesar Pista Financier" data-price="130" class="w-full border-2 border-primary/15 text-primary py-3 rounded-full font-label font-bold hover:bg-primary hover:text-on-primary active:scale-95 transition-all text-sm">Add to Cart</button>
+   </div>
+  </div>
+  </div>
+
+  <!-- TEA & TONICS -->
+  <div class="group menu-item" data-cat="tea" data-name="kashmiri kahwa" style="display:none">
+  <div class="bg-surface-container-lowest rounded-4xl overflow-hidden flex flex-col h-full editorial-shadow transition-all duration-500 hover:-translate-y-2">
+   <div class="h-56 bg-surface-container-high overflow-hidden"><img alt="Kashmiri Kahwa" class="w-full h-full object-cover" src="assets/kashmiri_kahwa.jpg"/></div>
+   <div class="p-7 flex flex-col flex-grow justify-between">
+   <div>
+    <div class="flex justify-between items-start mb-2">
+    <h3 class="font-headline text-xl text-primary">Kashmiri Kahwa</h3>
+    <span class="font-label text-base text-secondary ml-3">₹140</span>
+    </div>
+    <p class="text-on-surface-variant text-xs leading-relaxed mb-5">Green tea with Kashmiri saffron, whole spices, and Irani almonds. Ceremony in a cup.</p>
+   </div>
+   <button data-add-to-cart data-name="Kashmiri Kahwa" data-price="140" class="w-full border-2 border-primary/15 text-primary py-3 rounded-full font-label font-bold hover:bg-primary hover:text-on-primary active:scale-95 transition-all text-sm">Add to Cart</button>
+   </div>
+  </div>
+  </div>
+
+  <div class="group menu-item" data-cat="tea" data-name="rose hibiscus tonic" style="display:none">
+  <div class="bg-surface-container-lowest rounded-4xl overflow-hidden flex flex-col h-full editorial-shadow transition-all duration-500 hover:-translate-y-2">
+   <div class="h-56 bg-surface-container-high overflow-hidden"><img alt="Rose Hibiscus Tonic" class="w-full h-full object-cover" src="assets/rose_hibiscus_tonic.jpg"/></div>
+   <div class="p-7 flex flex-col flex-grow justify-between">
+   <div>
+    <div class="flex justify-between items-start mb-2">
+    <h3 class="font-headline text-xl text-primary">Rose Hibiscus Tonic</h3>
+    <span class="font-label text-base text-secondary ml-3">₹140</span>
+    </div>
+    <p class="text-on-surface-variant text-xs leading-relaxed mb-5">Cold-brewed hibiscus and rosewater over sparkling tonic with a kokum and lavender float.</p>
+   </div>
+   <button data-add-to-cart data-name="Rose Hibiscus Tonic" data-price="140" class="w-full border-2 border-primary/15 text-primary py-3 rounded-full font-label font-bold hover:bg-primary hover:text-on-primary active:scale-95 transition-all text-sm">Add to Cart</button>
+   </div>
+  </div>
+  </div>
+
+  <div id="menu-no-results" class="col-span-full text-center py-16 hidden">
+  <span class="material-symbols-outlined text-outline opacity-30" style="font-size:64px">search_off</span>
+  <p class="font-headline text-2xl text-outline opacity-50 mt-4 italic">No items found</p>
+  </div>
+ </div>
+ </main>
+ <footer class="bg-[#271903] py-10">
+ <div class="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+  <span class="font-headline text-xl text-[#fff8f3]">The Artisanal Hearth</span>
+  <p class="font-label text-xs uppercase tracking-widest text-[#d7ccc8] opacity-60">© 2024 — Crafted for Slow Living</p>
+ </div>
+ </footer>
+</div>
+
+<!-- ============================= ORDER PAGE ============================= -->
+<div id="page-order" class="page">
+ <main class="pt-28 pb-20 px-6 md:px-8 max-w-7xl mx-auto">
+ <div class="mb-10 reveal">
+  <span class="font-label text-xs uppercase tracking-[0.18em] text-secondary opacity-70 mb-2 block">Your Selection</span>
+  <h1 class="font-headline text-4xl md:text-5xl text-primary italic">Your Order</h1>
+ </div>
+ <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+  <div class="lg:col-span-7">
+  <div id="cart-items" class="space-y-4"></div>
+  <div id="cart-empty" class="text-center py-20 hidden">
+   <span class="material-symbols-outlined text-outline opacity-20" style="font-size:72px">shopping_bag</span>
+   <p class="font-headline text-2xl text-outline opacity-40 mt-4 italic">Your cart is empty</p>
+   <button class="mt-6 bg-primary text-on-primary px-8 py-3 rounded-full font-label font-semibold hover:opacity-85 transition-all text-sm">Browse the Menu</button>
+  </div>
+  <div id="order-extras" class="mt-8">
+   <label class="block font-label text-sm font-semibold text-on-surface mb-2 uppercase tracking-wider opacity-60">Special Instructions</label>
+   <textarea id="order-instructions" class="w-full bg-surface-container-lowest border-none rounded-2xl p-4 focus:ring-2 focus:ring-secondary/20 min-h-[90px] placeholder:text-outline-variant font-body text-sm hearth-input" placeholder="e.g. Extra hot, no sugar, doorbell not working…" maxlength="500"></textarea>
+  </div>
+  </div>
+
+  <!-- Checkout panel -->
+  <div class="lg:col-span-5 reveal">
+  <div class="bg-surface-container-low rounded-3xl p-8 soft-shadow sticky top-28">
+   <h2 class="font-headline text-3xl text-primary mb-7 italic border-b border-outline-variant/20 pb-4">Checkout</h2>
+   <div class="space-y-4 mb-6">
+   <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Full Name *</label>
+    <input id="order-name" class="w-full bg-surface-container-lowest border-none rounded-xl h-12 px-4 focus:ring-2 focus:ring-secondary/20 placeholder:text-outline-variant text-sm hearth-input" placeholder="Aarav Mehta" type="text" maxlength="80"/>
+    <p class="error-msg" id="err-order-name">Please enter your full name (letters only).</p>
+   </div>
+   <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Mobile Number *</label>
+    <input id="order-phone" class="w-full bg-surface-container-lowest border-none rounded-xl h-12 px-4 focus:ring-2 focus:ring-secondary/20 placeholder:text-outline-variant text-sm hearth-input" placeholder="98765 43210" type="tel" maxlength="10"/>
+    <p class="error-msg" id="err-order-phone">Enter a valid 10-digit Indian mobile number.</p>
+   </div>
+   <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Delivery Address *</label>
+    <input id="order-address" class="w-full bg-surface-container-lowest border-none rounded-xl h-12 px-4 focus:ring-2 focus:ring-secondary/20 placeholder:text-outline-variant text-sm hearth-input" placeholder="Flat 4B, Pali Hill, Bandra West, Mumbai" type="text" maxlength="300"/>
+    <p class="error-msg" id="err-order-address">Please enter a valid delivery address.</p>
+   </div>
+   </div>
+   <div class="pt-5 border-t border-outline-variant/20 space-y-3 mb-6">
+   <div class="flex justify-between text-sm">
+    <span class="font-label uppercase tracking-wider text-xs opacity-60">Subtotal</span>
+    <span id="order-subtotal" class="font-label font-semibold">₹0</span>
+   </div>
+   <div class="flex justify-between text-sm">
+    <span class="font-label uppercase tracking-wider text-xs opacity-60">Delivery</span>
+    <span class="font-label font-semibold text-secondary text-xs">Free</span>
+   </div>
+   <div class="flex justify-between items-end pt-3 border-t border-outline-variant/10">
+    <span class="font-headline text-lg text-primary">Total</span>
+    <span id="order-total" class="font-headline text-2xl text-primary">₹0</span>
+   </div>
+   </div>
+   <button id="place-order-btn" class="w-full bg-primary text-on-primary h-14 rounded-full font-label font-bold uppercase tracking-widest text-sm hover:opacity-85 transition-all flex items-center justify-center gap-2 group active:scale-95 disabled:opacity-50">
+   <span class="material-symbols-outlined fill-icon" style="font-size:18px">local_fire_department</span>
+   <span id="place-order-text">Place Order</span>
+   </button>
+   <div class="p-4 bg-secondary-container/30 rounded-xl flex items-start gap-3 mt-4">
+   <span class="material-symbols-outlined text-secondary opacity-60 text-base mt-0.5">info</span>
+   <p class="text-xs text-on-secondary-container/80 leading-relaxed">Our hearth is roaring and your order will be prepared with intentional care. Est. 20–25 min.</p>
+   </div>
+  </div>
+  </div>
+ </div>
+ </main>
+
+ <!-- Order confirmation modal -->
+ <div id="order-confirm" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 backdrop-blur-sm hidden">
+ <div class="bg-surface-bright rounded-3xl p-10 max-w-sm w-full mx-6 editorial-shadow text-center">
+  <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-5 check-pop">
+  <span class="material-symbols-outlined fill-icon text-primary" style="font-size:32px">check_circle</span>
+  </div>
+  <h3 class="font-headline text-3xl text-primary mb-3 italic">Order Placed!</h3>
+  <p id="order-confirm-id" class="font-label text-xs text-secondary opacity-60 mb-2"></p>
+  <p class="font-body text-on-surface-variant text-sm mb-7 leading-relaxed">Your order is being lovingly prepared. Estimated wait: 20–25 minutes.</p>
+  <button id="close-order-confirm-btn" class="w-full bg-primary text-on-primary py-3.5 rounded-full font-label font-semibold hover:opacity-85 transition-all text-sm">Back to Home</button>
+ </div>
+ </div>
+ <footer class="bg-[#271903] py-10 mt-12">
+ <div class="max-w-7xl mx-auto px-8 flex justify-between items-center">
+  <span class="font-headline text-xl text-[#fff8f3]">The Artisanal Hearth</span>
+  <p class="font-label text-xs uppercase tracking-widest text-[#d7ccc8] opacity-60">© 2024</p>
+ </div>
+ </footer>
+</div>
+
+<!-- ============================= RESERVATION PAGE ============================= -->
+<div id="page-reservation" class="page">
+ <main class="pt-28 pb-20 px-6 md:px-8 max-w-7xl mx-auto">
+ <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+  <div class="reveal">
+  <span class="font-label text-xs uppercase tracking-[0.18em] text-secondary opacity-70 mb-4 block">Book a Table</span>
+  <h1 class="font-headline text-5xl md:text-6xl text-primary leading-tight mb-4">Reserve Your<br/><span class="italic font-light">Slow Morning</span></h1>
+  <p class="font-headline italic text-xl text-on-surface-variant mb-10 leading-relaxed">We'll have your favourite ready the moment you arrive.</p>
+  <div class="aspect-[4/3] rounded-3xl overflow-hidden editorial-shadow">
+   <img class="w-full h-full object-cover" src="assets/hearth_smoked_latte.jpg" alt="Signature latte"/>
+  </div>
+  </div>
+
+  <div class="reveal" style="animation-delay:0.15s">
+  <div class="bg-surface-container-low rounded-3xl p-8 md:p-10 soft-shadow">
+   <h2 class="font-headline text-2xl text-primary mb-7 italic">Reservation Details</h2>
+   <form id="res-form" class="space-y-5" novalidate>
+   <!-- Honeypot -->
+   <div class="honeypot-field" aria-hidden="true"><label>Leave blank</label><input type="text" name="honeypot" id="res-honeypot" tabindex="-1" autocomplete="off"/></div>
+
+   <div class="grid grid-cols-2 gap-4">
+    <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">First Name *</label>
+    <input id="res-first" class="w-full bg-surface border-none rounded-xl p-3.5 focus:ring-2 focus:ring-secondary/20 placeholder:text-outline-variant text-sm hearth-input" placeholder="Ananya" type="text" maxlength="50"/>
+    <p class="error-msg" id="err-res-first">Required. Letters only.</p>
+    </div>
+    <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Last Name *</label>
+    <input id="res-last" class="w-full bg-surface border-none rounded-xl p-3.5 focus:ring-2 focus:ring-secondary/20 placeholder:text-outline-variant text-sm hearth-input" placeholder="Krishnan" type="text" maxlength="50"/>
+    <p class="error-msg" id="err-res-last">Required. Letters only.</p>
+    </div>
+   </div>
+   <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Email *</label>
+    <input id="res-email" class="w-full bg-surface border-none rounded-xl p-3.5 focus:ring-2 focus:ring-secondary/20 placeholder:text-outline-variant text-sm hearth-input" placeholder="ananya@example.com" type="email" maxlength="100"/>
+    <p class="error-msg" id="err-res-email">Enter a valid email address.</p>
+   </div>
+   <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Mobile Number *</label>
+    <input id="res-phone" class="w-full bg-surface border-none rounded-xl p-3.5 focus:ring-2 focus:ring-secondary/20 placeholder:text-outline-variant text-sm hearth-input" placeholder="98765 43210" type="tel" maxlength="10"/>
+    <p class="error-msg" id="err-res-phone">Enter a valid 10-digit Indian mobile number.</p>
+   </div>
+   <div class="grid grid-cols-2 gap-4">
+    <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Date *</label>
+    <input id="res-date" class="w-full bg-surface border-none rounded-xl p-3.5 focus:ring-2 focus:ring-secondary/20 text-sm hearth-input" type="date"/>
+    <p class="error-msg" id="err-res-date">Please select a future date.</p>
+    </div>
+    <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Time *</label>
+    <select id="res-time" class="w-full bg-surface border-none rounded-xl p-3.5 focus:ring-2 focus:ring-secondary/20 font-body text-sm appearance-none hearth-input text-on-surface">
+     <option value="">Select time</option>
+     <option>07:00</option><option>07:30</option><option>08:00</option><option>08:30</option>
+     <option>09:00</option><option>09:30</option><option>10:00</option><option>10:30</option>
+     <option>11:00</option><option>11:30</option><option>12:00</option><option>12:30</option>
+     <option>13:00</option><option>13:30</option><option>14:00</option><option>14:30</option>
+     <option>15:00</option><option>15:30</option><option>16:00</option><option>16:30</option>
+     <option>17:00</option><option>17:30</option><option>18:00</option><option>18:30</option>
+     <option>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option>
+     <option>21:00</option>
+    </select>
+    <p class="error-msg" id="err-res-time">Please select a time.</p>
+    </div>
+   </div>
+   <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Number of Guests *</label>
+    <select id="res-guests" class="w-full bg-surface border-none rounded-xl p-3.5 focus:ring-2 focus:ring-secondary/20 font-body text-sm appearance-none hearth-input text-on-surface">
+    <option value="">Select guests</option>
+    <option>1</option><option>2</option><option>3</option><option>4</option>
+    <option>5</option><option>6</option><option>7</option><option>8</option>
+    <option>9</option><option>10</option>
+    </select>
+    <p class="error-msg" id="err-res-guests">Please select guest count.</p>
+   </div>
+   <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Special Occasion</label>
+    <select id="res-occasion" class="w-full bg-surface border-none rounded-xl p-3.5 focus:ring-2 focus:ring-secondary/20 font-body text-sm appearance-none hearth-input text-on-surface">
+    <option value="">None</option>
+    <option>Birthday</option><option>Anniversary</option><option>Business Lunch</option>
+    <option>Family Gathering</option><option>Date Night</option><option>Other</option>
+    </select>
+   </div>
+   <button type="submit" id="res-submit-btn" class="w-full bg-primary text-on-primary py-4 rounded-full font-label font-bold uppercase tracking-widest text-sm hover:opacity-85 active:scale-95 transition-all disabled:opacity-50">Reserve Table</button>
+   </form>
+  </div>
+  </div>
+ </div>
+ </main>
+
+ <div id="res-confirm" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 backdrop-blur-sm hidden">
+ <div class="bg-surface-bright rounded-3xl p-10 max-w-sm w-full mx-6 editorial-shadow text-center">
+  <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-5 check-pop">
+  <span class="material-symbols-outlined fill-icon text-primary" style="font-size:32px">event_available</span>
+  </div>
+  <h3 class="font-headline text-3xl text-primary mb-3 italic">Table Reserved!</h3>
+  <p class="font-body text-on-surface-variant text-sm mb-7 leading-relaxed">We've confirmed your reservation. See you soon! A confirmation has been noted.</p>
+  <button id="res-confirm-close-btn" class="w-full bg-primary text-on-primary py-3.5 rounded-full font-label font-semibold hover:opacity-85 transition-all text-sm">Wonderful, Thank You</button>
+ </div>
+ </div>
+ <footer class="bg-[#271903] py-10 mt-12">
+ <div class="max-w-7xl mx-auto px-8 flex justify-between items-center">
+  <span class="font-headline text-xl text-[#fff8f3]">The Artisanal Hearth</span>
+  <p class="font-label text-xs uppercase tracking-widest text-[#d7ccc8] opacity-60">© 2024</p>
+ </div>
+ </footer>
+</div>
+
+<!-- ============================= ABOUT PAGE ============================= -->
+<div id="page-about" class="page">
+ <main class="pt-28 pb-20 px-6 md:px-8 max-w-7xl mx-auto">
+ <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-24">
+  <div class="reveal">
+  <span class="font-label text-xs uppercase tracking-[0.18em] text-secondary opacity-70 mb-4 block">Our Story</span>
+  <h1 class="font-headline text-5xl md:text-6xl text-primary leading-tight mb-6">Brewing <span class="italic font-light">with Purpose</span></h1>
+  <p class="text-on-surface-variant leading-relaxed mb-5">The Artisanal Hearth was founded by Vikram Nair, a former software engineer who traded his keyboard for a portafilter after tasting a single-origin Coorg espresso in a tiny roadside stall. That cup changed everything.</p>
+  <p class="text-on-surface-variant leading-relaxed mb-5">Every recipe at The Hearth is co-created with our head roaster, Deepa Krishnamurthy, who has spent a decade sourcing directly from indigenous farming communities across Karnataka, Andhra Pradesh, and Assam.</p>
+  <p class="text-on-surface-variant leading-relaxed">We are proud to be Bandra's first café to offer fully traceable, farm-to-cup sourcing with living wage certifications for every partner farm.</p>
+  </div>
+  <div class="reveal" style="animation-delay:0.15s">
+  <div class="aspect-[4/3] rounded-3xl overflow-hidden editorial-shadow">
+   <img class="w-full h-full object-cover" src="assets/cafe_interior.jpg" alt="Cafe interior"/>
+  </div>
+  </div>
+ </div>
+ <div class="grid grid-cols-2 md:grid-cols-4 gap-6 reveal">
+  <div class="bg-surface-container-low rounded-3xl p-8 text-center soft-shadow">
+  <p class="font-headline text-5xl text-primary mb-2">14+</p>
+  <p class="font-label text-xs uppercase tracking-wider text-secondary opacity-70">Partner Farms</p>
+  </div>
+  <div class="bg-surface-container p-8 rounded-3xl text-center soft-shadow">
+  <p class="font-headline text-5xl text-primary mb-2">3</p>
+  <p class="font-label text-xs uppercase tracking-wider text-secondary opacity-70">Indian Origins</p>
+  </div>
+  <div class="bg-surface-container-low p-8 rounded-3xl text-center soft-shadow">
+  <p class="font-headline text-5xl text-primary mb-2">250+</p>
+  <p class="font-label text-xs uppercase tracking-wider text-secondary opacity-70">Daily Cups</p>
+  </div>
+  <div class="bg-surface-container p-8 rounded-3xl text-center soft-shadow">
+  <p class="font-headline text-5xl text-primary mb-2">100%</p>
+  <p class="font-label text-xs uppercase tracking-wider text-secondary opacity-70">Traceable</p>
+  </div>
+ </div>
+ </main>
+ <footer class="bg-[#271903] py-10 mt-12">
+ <div class="max-w-7xl mx-auto px-8 flex justify-between items-center">
+  <span class="font-headline text-xl text-[#fff8f3]">The Artisanal Hearth</span>
+  <p class="font-label text-xs uppercase tracking-widest text-[#d7ccc8] opacity-60">© 2024</p>
+ </div>
+ </footer>
+</div>
+
+<!-- ============================= CONTACT PAGE ============================= -->
+<div id="page-contact" class="page">
+ <main class="pt-28 pb-20 px-6 md:px-8 max-w-7xl mx-auto">
+ <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+  <div class="reveal">
+  <span class="font-label text-xs uppercase tracking-[0.18em] text-secondary opacity-70 mb-4 block">Get in Touch</span>
+  <h1 class="font-headline text-5xl md:text-6xl text-primary leading-tight mb-4">Let's <span class="italic font-light">Connect</span></h1>
+  <p class="font-headline italic text-xl text-on-surface-variant mb-10 leading-relaxed max-w-md">Whether it's feedback, a private event inquiry, or just to say hello — our door is open.</p>
+  <div class="space-y-5 mb-10">
+   <div class="flex items-center gap-4 p-5 bg-surface-container-low rounded-2xl hover:bg-surface-container transition-colors">
+   <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-primary" style="font-size:20px">location_on</span></div>
+   <div>
+    <p class="font-label text-xs uppercase tracking-wider text-secondary opacity-60 mb-0.5">Address</p>
+    <p class="font-body text-sm text-on-surface">14 Pali Hill, Bandra West, Mumbai 400050</p>
+   </div>
+   </div>
+   <div class="flex items-center gap-4 p-5 bg-surface-container-low rounded-2xl hover:bg-surface-container transition-colors">
+   <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-primary" style="font-size:20px">phone</span></div>
+   <div>
+    <p class="font-label text-xs uppercase tracking-wider text-secondary opacity-60 mb-0.5">Phone</p>
+    <p class="font-body text-sm text-on-surface">+91 98765 43210</p>
+   </div>
+   </div>
+   <div class="flex items-center gap-4 p-5 bg-surface-container-low rounded-2xl hover:bg-surface-container transition-colors">
+   <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-primary" style="font-size:20px">mail</span></div>
+   <div>
+    <p class="font-label text-xs uppercase tracking-wider text-secondary opacity-60 mb-0.5">Email</p>
+    <p class="font-body text-sm text-on-surface">hello@artisanalhearth.in</p>
+   </div>
+   </div>
+  </div>
+  </div>
+
+  <div class="reveal" style="animation-delay:0.15s">
+  <div class="bg-surface-container-low rounded-3xl p-8 md:p-10 soft-shadow">
+   <h2 class="font-headline text-2xl text-primary mb-7 italic">Send a Message</h2>
+   <form id="contact-form" class="space-y-5" novalidate>
+   <!-- Honeypot -->
+   <div class="honeypot-field" aria-hidden="true"><label>Leave blank</label><input type="text" name="honeypot" id="contact-honeypot" tabindex="-1" autocomplete="off"/></div>
+
+   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Name *</label>
+    <input id="contact-name" class="w-full bg-surface border-none rounded-xl p-3.5 focus:ring-2 focus:ring-secondary/20 placeholder:text-outline-variant text-sm hearth-input" placeholder="Rohan Kapoor" type="text" maxlength="80"/>
+    <p class="error-msg" id="err-contact-name">Required. Letters only.</p>
+    </div>
+    <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Email *</label>
+    <input id="contact-email" class="w-full bg-surface border-none rounded-xl p-3.5 focus:ring-2 focus:ring-secondary/20 placeholder:text-outline-variant text-sm hearth-input" placeholder="rohan@example.com" type="email" maxlength="100"/>
+    <p class="error-msg" id="err-contact-email">Enter a valid email address.</p>
+    </div>
+   </div>
+   <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Subject *</label>
+    <select id="contact-subject" class="w-full bg-surface border-none rounded-xl p-3.5 focus:ring-2 focus:ring-secondary/20 font-body text-sm appearance-none hearth-input text-on-surface">
+    <option value="">Select a topic</option>
+    <option>General Inquiry</option><option>Private Event</option>
+    <option>Press &amp; Media</option><option>Wholesale Coffee</option><option>Feedback</option>
+    </select>
+    <p class="error-msg" id="err-contact-subject">Please select a subject.</p>
+   </div>
+   <div>
+    <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Message *</label>
+    <textarea id="contact-message" class="w-full bg-surface border-none rounded-xl p-3.5 focus:ring-2 focus:ring-secondary/20 min-h-[130px] font-body text-sm placeholder:text-outline-variant hearth-input" placeholder="Tell us everything…" maxlength="1000"></textarea>
+    <p class="error-msg" id="err-contact-message">Message must be 10–1000 characters.</p>
+   </div>
+   <button type="submit" id="contact-submit-btn" class="w-full bg-primary text-on-primary py-4 rounded-full font-label font-bold uppercase tracking-widest text-sm hover:opacity-85 active:scale-95 transition-all disabled:opacity-50">Send Message</button>
+   </form>
+  </div>
+  </div>
+ </div>
+ </main>
+
+ <div id="contact-confirm" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 backdrop-blur-sm hidden">
+ <div class="bg-surface-bright rounded-3xl p-10 max-w-sm w-full mx-6 editorial-shadow text-center">
+  <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-5 check-pop">
+  <span class="material-symbols-outlined fill-icon text-primary" style="font-size:32px">mark_email_read</span>
+  </div>
+  <h3 class="font-headline text-3xl text-primary mb-3 italic">Message Sent!</h3>
+  <p class="font-body text-on-surface-variant text-sm mb-7 leading-relaxed">We'll be in touch within 24 hours. Thank you for reaching out.</p>
+  <button id="contact-confirm-close-btn" class="w-full bg-primary text-on-primary py-3.5 rounded-full font-label font-semibold hover:opacity-85 transition-all text-sm">Wonderful, Thank You</button>
+ </div>
+ </div>
+ <footer class="bg-[#271903] py-10 mt-12">
+ <div class="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+  <span class="font-headline text-xl text-[#fff8f3]">The Artisanal Hearth</span>
+  <div class="flex gap-6">
+  <a href="#" class="font-label text-xs uppercase tracking-widest text-[#d7ccc8] hover:text-[#fff8f3] transition-colors">Privacy</a>
+  <a href="#" class="font-label text-xs uppercase tracking-widest text-[#d7ccc8] hover:text-[#fff8f3] transition-colors">Terms</a>
+  <a href="#" class="font-label text-xs uppercase tracking-widest text-[#d7ccc8] hover:text-[#fff8f3] transition-colors">Careers</a>
+  </div>
+  <p class="font-label text-xs uppercase tracking-widest text-[#d7ccc8] opacity-50">© 2024</p>
+ </div>
+ </footer>
+</div>
+
+<!-- ============================= ADMIN PAGE ============================= -->
+<div id="page-admin" class="page">
+ <!-- Login Screen -->
+ <div id="admin-login-screen" class="min-h-screen flex items-center justify-center px-6 pt-20">
+ <div class="w-full max-w-sm">
+  <div class="text-center mb-8">
+  <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+   <span class="material-symbols-outlined text-primary" style="font-size:32px">admin_panel_settings</span>
+  </div>
+  <h1 class="font-headline text-3xl text-primary italic">Admin Panel</h1>
+  <p class="font-label text-xs text-secondary opacity-60 mt-1 uppercase tracking-widest">The Artisanal Hearth</p>
+  </div>
+  <div class="bg-surface-container-low rounded-3xl p-8 soft-shadow">
+  <div class="space-y-4">
+   <div>
+   <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Email</label>
+   <input id="admin-email-input" class="w-full bg-surface border-none rounded-xl h-12 px-4 focus:ring-2 focus:ring-secondary/20 text-sm hearth-input" type="email" placeholder="admin@artisanalhearth.in"/>
+   </div>
+   <div>
+   <label class="block font-label text-xs uppercase tracking-wider text-secondary opacity-70 mb-1.5">Password</label>
+   <input id="admin-pass-input" class="w-full bg-surface border-none rounded-xl h-12 px-4 focus:ring-2 focus:ring-secondary/20 text-sm hearth-input" type="password" placeholder="••••••••"/>
+   </div>
+   <p id="admin-login-error" class="text-error text-xs hidden"></p>
+   <button id="admin-login-btn" class="w-full bg-primary text-on-primary h-12 rounded-full font-label font-bold text-sm hover:opacity-85 active:scale-95 transition-all uppercase tracking-widest">Sign In</button>
+  </div>
+  </div>
+ </div>
+ </div>
+
+ <!-- Dashboard (shown after login) -->
+ <div id="admin-dashboard" class="hidden pt-24 pb-20 px-6 md:px-8 max-w-7xl mx-auto">
+ <div class="flex justify-between items-center mb-8">
+  <div>
+  <h1 class="font-headline text-3xl text-primary italic">Dashboard</h1>
+  <p class="font-label text-xs text-secondary opacity-60 uppercase tracking-widest mt-1">The Artisanal Hearth</p>
+  </div>
+  <button id="admin-logout-btn" class="flex items-center gap-2 text-sm font-label text-secondary hover:text-primary transition-colors">
+  <span class="material-symbols-outlined" style="font-size:18px">logout</span> Sign Out
+  </button>
+ </div>
+
+ <!-- Stats row -->
+ <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+  <div class="bg-surface-container-low rounded-2xl p-5 soft-shadow">
+  <p class="font-label text-xs uppercase tracking-wider text-secondary opacity-60 mb-1">Total Orders</p>
+  <p id="stat-orders" class="font-headline text-3xl text-primary">—</p>
+  </div>
+  <div class="bg-surface-container-low rounded-2xl p-5 soft-shadow">
+  <p class="font-label text-xs uppercase tracking-wider text-secondary opacity-60 mb-1">Pending</p>
+  <p id="stat-pending" class="font-headline text-3xl text-primary">—</p>
+  </div>
+  <div class="bg-surface-container-low rounded-2xl p-5 soft-shadow">
+  <p class="font-label text-xs uppercase tracking-wider text-secondary opacity-60 mb-1">Reservations</p>
+  <p id="stat-reservations" class="font-headline text-3xl text-primary">—</p>
+  </div>
+  <div class="bg-surface-container-low rounded-2xl p-5 soft-shadow">
+  <p class="font-label text-xs uppercase tracking-wider text-secondary opacity-60 mb-1">Unread Messages</p>
+  <p id="stat-messages" class="font-headline text-3xl text-primary">—</p>
+  </div>
+ </div>
+
+ <!-- Tabs -->
+ <div class="flex gap-2 mb-6 border-b border-outline-variant/20 pb-4">
+  <button class="admin-tab active" data-admin-tab="orders">Orders</button>
+  <button class="admin-tab" data-admin-tab="reservations">Reservations</button>
+  <button class="admin-tab" data-admin-tab="messages">Messages</button>
+ </div>
+
+ <!-- Orders Tab -->
+ <div id="admin-orders-tab">
+  <div class="overflow-x-auto rounded-2xl bg-surface-container-low soft-shadow">
+  <table class="w-full text-sm">
+   <thead>
+   <tr class="border-b border-outline-variant/20">
+    <th class="text-left p-4 font-label text-xs uppercase tracking-wider text-secondary opacity-60">Order ID</th>
+    <th class="text-left p-4 font-label text-xs uppercase tracking-wider text-secondary opacity-60">Customer</th>
+    <th class="text-left p-4 font-label text-xs uppercase tracking-wider text-secondary opacity-60">Phone</th>
+    <th class="text-left p-4 font-label text-xs uppercase tracking-wider text-secondary opacity-60">Total</th>
+    <th class="text-left p-4 font-label text-xs uppercase tracking-wider text-secondary opacity-60">Status</th>
+    <th class="text-left p-4 font-label text-xs uppercase tracking-wider text-secondary opacity-60">Date</th>
+    <th class="text-left p-4 font-label text-xs uppercase tracking-wider text-secondary opacity-60">Update</th>
+   </tr>
+   </thead>
+   <tbody id="admin-orders-body">
+   <tr><td colspan="7" class="text-center py-10 text-secondary opacity-40 font-label text-sm">Loading orders…</td></tr>
+   </tbody>
+  </table>
+  </div>
+ </div>
+
+ <!-- Reservations Tab -->
+ <div id="admin-reservations-tab" class="hidden">
+  <div class="overflow-x-auto rounded-2xl bg-surface-container-low soft-shadow">
+  <table class="w-full text-sm">
+   <thead>
+   <tr class="border-b border-outline-variant/20">
+    <th class="text-left p-4 font-label text-xs uppercase tracking-wider text-secondary opacity-60">Name</th>
+    <th class="text-left p-4 font-label text-xs uppercase tracking-wider text-secondary opacity-60">Email</th>
+    <th class="text-left p-4 font-label text-xs uppercase tracking-wider text-secondary opacity-60">Phone</th>
+    <th class="text-left p-4 font-label text-xs uppercase tracking-wider text-secondary opacity-60">Date &amp; Time</th>
+    <th class="text-left p-4 font-label text-xs uppercase tracking-wider text-secondary opacity-60">Guests</th>
+    <th class="text-left p-4 font-label text-xs uppercase tracking-wider text-secondary opacity-60">Status</th>
+   </tr>
+   </thead>
+   <tbody id="admin-res-body">
+   <tr><td colspan="6" class="text-center py-10 text-secondary opacity-40 font-label text-sm">Loading reservations…</td></tr>
+   </tbody>
+  </table>
+  </div>
+ </div>
+
+ <!-- Messages Tab -->
+ <div id="admin-messages-tab" class="hidden">
+  <div id="admin-messages-list" class="space-y-4">
+  <p class="text-center py-10 text-secondary opacity-40 font-label text-sm">Loading messages…</p>
+  </div>
+ </div>
+ </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast" class="fixed bottom-6 right-6 z-[150] bg-[#271903] text-[#fff8f3] px-6 py-3 rounded-full font-label font-medium text-sm shadow-xl opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-2 translate-y-2">
+ <span class="material-symbols-outlined fill-icon text-[#eabe9f]" id="toast-icon" style="font-size:16px">check_circle</span>
+ <span id="toast-msg">Added to cart</span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// SECURITY: XSS sanitization utility
+// ═══════════════════════════════════════════════════════════
+function escHtml(str) {
+ if (typeof str !== 'string') return '';
+ return str
+ .replace(/&/g, '&amp;')
+ .replace(/</g, '&lt;')
+ .replace(/>/g, '&gt;')
+ .replace(/"/g, '&quot;')
+ .replace(/'/g, '&#039;');
+}
+
+// Safe text setter — never use innerHTML with user data
+function safeText(el, text) {
+ if (el) el.textContent = String(text);
+}
+
+// ═══════════════════════════════════════════════════════════
+// API BASE URL — auto-detects environment
+// ═══════════════════════════════════════════════════════════
+const API_BASE = window.location.origin;
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let cart = [];
+let currentPage = 'home';
+let adminToken = null;
+let currentAdminTab = 'orders';
+
+// ═══════════════════════════════════════════════════════════
+// LOADER
+// ═══════════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+ // Set min date for reservation to today
+ const dateInput = document.getElementById('res-date');
+ if (dateInput) {
+ const today = new Date();
+ const yyyy = today.getFullYear();
+ const mm = String(today.getMonth() + 1).padStart(2, '0');
+ const dd = String(today.getDate()).padStart(2, '0');
+ dateInput.min = `${yyyy}-${mm}-${dd}`;
+ }
+ setTimeout(() => {
+ document.getElementById('loader').classList.add('fade-out');
+ navigate('home');
+ initReveal();
+ }, 1000);
+});
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function navigate(page) {
+ document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+ document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+ const el = document.getElementById('page-' + page);
+ if (el) el.classList.add('active');
+ const link = document.querySelector('[data-page="' + page + '"]');
+ if (link) link.classList.add('active');
+ currentPage = page;
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+ setTimeout(initReveal, 100);
+ if (page === 'order') renderCart();
+ if (page === 'menu') setTab('coffee');
+}
+
+// ═══════════════════════════════════════════════════════════
+// MOBILE MENU
+// ═══════════════════════════════════════════════════════════
+function toggleMobileMenu() {
+ const m = document.getElementById('mobile-menu');
+ const icon = document.getElementById('menu-icon');
+ m.classList.toggle('open');
+ icon.textContent = m.classList.contains('open') ? 'close' : 'menu';
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCROLL REVEAL
+// ═══════════════════════════════════════════════════════════
+function initReveal() {
+ const els = document.querySelectorAll('#page-' + currentPage + ' .reveal');
+ const obs = new IntersectionObserver((entries) => {
+ entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+ }, { threshold: 0.12 });
+ els.forEach(el => obs.observe(el));
+}
+
+// ═══════════════════════════════════════════════════════════
+// CART
+// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// CART
+// ═══════════════════════════════════════════════════════════
+function addToCart(name, price) {
+ // Validate inputs
+ if (typeof name !== 'string' || name.length > 100) return;
+ if (typeof price !== 'number' || price < 0 || price > 100000) return;
+
+ const existing = cart.find(i => i.name === name);
+ if (existing) { existing.qty++; }
+ else { cart.push({ name, price, qty: 1 }); }
+ updateCartBadge();
+ showToast(name + ' added to cart', 'check_circle');
+}
+
+function updateCartBadge() {
+ const total = cart.reduce((s, i) => s + i.qty, 0);
+ const badge = document.getElementById('cart-badge');
+ safeText(badge, total);
+ total > 0 ? badge.classList.add('visible') : badge.classList.remove('visible');
+}
+
+function renderCart() {
+ const container = document.getElementById('cart-items');
+ const empty = document.getElementById('cart-empty');
+ const extras = document.getElementById('order-extras');
+ if (cart.length === 0) {
+ container.innerHTML = '';
+ empty.classList.remove('hidden');
+ extras.classList.add('hidden');
+ safeText(document.getElementById('order-subtotal'), '₹0');
+ safeText(document.getElementById('order-total'), '₹0');
+ return;
+ }
+ empty.classList.add('hidden');
+ extras.classList.remove('hidden');
+
+ // Item to image mapping
+ const itemImages = {
+  'Hearth Smoked Latte': 'assets/hearth_smoked_latte.jpg',
+  'Coorg Cold Brew Tonic': 'assets/cold_brew.jpg',
+  'Araku Filter Coffee': 'assets/araku_filter_coffe.jpg',
+  'Golden Hour Latte': 'assets/golden_hour_latte.jpg',
+  'Masala French Toast': 'assets/masala_frech_toast.jpg',
+  'Avocado Achari Toast': 'assets/Avocado_Achari_toast.jpg',
+  'Banana Walnut Bread': 'assets/banana_walnut_bread.jpg',
+  'Mishti Doi Cheesecake': 'assets/Mishti_dohi.jpg',
+  'Kesar Pista Financier': 'assets/Kesar_Pista_Financier.jpg',
+  'Kashmiri Kahwa': 'assets/kashmiri_kahwa.jpg',
+  'Rose Hibiscus Tonic': 'assets/rose_hibiscus_tonic.jpg'
+ };
+
+ // Build cart items safely without putting user data in innerHTML
+ container.innerHTML = '';
+ cart.forEach((item, idx) => {
+ const row = document.createElement('div');
+ row.className = 'flex gap-5 items-center p-5 bg-surface-container-low rounded-2xl group transition-all duration-300 hover:shadow-lg hover:shadow-secondary/5';
+
+ const icon = document.createElement('div');
+ icon.className = 'w-16 h-16 bg-surface-container-high rounded-xl overflow-hidden flex-shrink-0';
+ const imgSrc = itemImages[item.name] || 'assets/hearth_smoked_latte.jpg'; // fallback image
+ icon.innerHTML = `<img src="${imgSrc}" alt="${item.name}" class="w-full h-full object-cover">`;
+
+ const info = document.createElement('div');
+ info.className = 'flex-grow';
+
+ const topRow = document.createElement('div');
+ topRow.className = 'flex justify-between items-start';
+
+ const nameEl = document.createElement('h4');
+ nameEl.className = 'font-headline text-base text-primary';
+ nameEl.textContent = item.name;
+
+ const priceEl = document.createElement('span');
+ priceEl.className = 'font-label font-semibold text-secondary text-sm ml-4';
+ priceEl.textContent = '₹' + (item.price * item.qty).toFixed(0);
+
+ topRow.appendChild(nameEl);
+ topRow.appendChild(priceEl);
+
+ const eachEl = document.createElement('p');
+ eachEl.className = 'text-on-surface-variant text-xs mt-0.5';
+ eachEl.textContent = '₹' + item.price + ' each';
+
+ const controls = document.createElement('div');
+ controls.className = 'mt-3 flex items-center justify-between';
+
+ const qtyWrap = document.createElement('div');
+ qtyWrap.className = 'flex items-center bg-surface-container-high rounded-full px-1.5 py-1 gap-1';
+
+ const minusBtn = document.createElement('button');
+ minusBtn.className = 'qty-btn w-7 h-7 flex items-center justify-center text-primary rounded-full transition-colors text-lg font-bold';
+ minusBtn.textContent = '−';
+ minusBtn.onclick = () => changeQty(idx, -1);
+
+ const qtyNum = document.createElement('span');
+ qtyNum.className = 'font-label font-semibold text-sm px-2';
+ qtyNum.textContent = item.qty;
+
+ const plusBtn = document.createElement('button');
+ plusBtn.className = 'qty-btn w-7 h-7 flex items-center justify-center text-primary rounded-full transition-colors text-lg font-bold';
+ plusBtn.textContent = '+';
+ plusBtn.onclick = () => changeQty(idx, 1);
+
+ qtyWrap.append(minusBtn, qtyNum, plusBtn);
+
+ const removeBtn = document.createElement('button');
+ removeBtn.className = 'text-error/50 hover:text-error transition-colors flex items-center gap-1 text-xs font-label';
+ removeBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px">delete</span>';
+ removeBtn.appendChild(document.createTextNode(' Remove'));
+ removeBtn.onclick = () => removeItem(idx);
+
+ controls.append(qtyWrap, removeBtn);
+ info.append(topRow, eachEl, controls);
+ row.append(icon, info);
+ container.appendChild(row);
+ });
+
+ const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
+ safeText(document.getElementById('order-subtotal'), '₹' + sub.toFixed(0));
+ safeText(document.getElementById('order-total'), '₹' + sub.toFixed(0));
+}
+
+function changeQty(idx, delta) {
+ cart[idx].qty += delta;
+ if (cart[idx].qty <= 0) cart.splice(idx, 1);
+ updateCartBadge();
+ renderCart();
+}
+
+function removeItem(idx) {
+ cart.splice(idx, 1);
+ updateCartBadge();
+ renderCart();
+}
+
+// ═══════════════════════════════════════════════════════════
+// VALIDATION HELPERS
+// ═══════════════════════════════════════════════════════════
+const VALIDATORS = {
+ name: /^[a-zA-Z\u0900-\u097F\s.'\-]+$/,
+ phone: /^[6-9]\d{9}$/,
+ email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+};
+
+function setFieldError(inputId, errorId, show) {
+ const input = document.getElementById(inputId);
+ const err = document.getElementById(errorId);
+ if (!input || !err) return;
+ if (show) {
+ input.classList.add('field-error');
+ err.classList.add('show');
+ } else {
+ input.classList.remove('field-error');
+ err.classList.remove('show');
+ }
+ return !show;
+}
+
+function validateOrderForm() {
+ const name = document.getElementById('order-name').value.trim();
+ const phone = document.getElementById('order-phone').value.trim();
+ const address = document.getElementById('order-address').value.trim();
+
+ let valid = true;
+ valid = setFieldError('order-name', 'err-order-name', !name || !VALIDATORS.name.test(name)) && valid;
+ valid = setFieldError('order-phone', 'err-order-phone', !VALIDATORS.phone.test(phone)) && valid;
+ valid = setFieldError('order-address', 'err-order-address', address.length < 5) && valid;
+ return valid;
+}
+
+function validateResForm() {
+ const first = document.getElementById('res-first').value.trim();
+ const last = document.getElementById('res-last').value.trim();
+ const email = document.getElementById('res-email').value.trim();
+ const phone = document.getElementById('res-phone').value.trim();
+ const date = document.getElementById('res-date').value;
+ const time = document.getElementById('res-time').value;
+ const guests = document.getElementById('res-guests').value;
+
+ const today = new Date(); today.setHours(0,0,0,0);
+ const selDate = date ? new Date(date) : null;
+
+ let valid = true;
+ valid = setFieldError('res-first', 'err-res-first', !first || !VALIDATORS.name.test(first)) && valid;
+ valid = setFieldError('res-last', 'err-res-last', !last || !VALIDATORS.name.test(last)) && valid;
+ valid = setFieldError('res-email', 'err-res-email', !VALIDATORS.email.test(email))   && valid;
+ valid = setFieldError('res-phone', 'err-res-phone', !VALIDATORS.phone.test(phone))   && valid;
+ valid = setFieldError('res-date', 'err-res-date', !selDate || selDate < today)    && valid;
+ valid = setFieldError('res-time', 'err-res-time', !time)         && valid;
+ valid = setFieldError('res-guests', 'err-res-guests', !guests)         && valid;
+ return valid;
+}
+
+function validateContactForm() {
+ const name = document.getElementById('contact-name').value.trim();
+ const email = document.getElementById('contact-email').value.trim();
+ const subject = document.getElementById('contact-subject').value;
+ const message = document.getElementById('contact-message').value.trim();
+
+ let valid = true;
+ valid = setFieldError('contact-name', 'err-contact-name', !name || !VALIDATORS.name.test(name)) && valid;
+ valid = setFieldError('contact-email', 'err-contact-email', !VALIDATORS.email.test(email))    && valid;
+ valid = setFieldError('contact-subject', 'err-contact-subject', !subject)         && valid;
+ valid = setFieldError('contact-message', 'err-contact-message', message.length < 10)      && valid;
+ return valid;
+}
+
+// ═══════════════════════════════════════════════════════════
+// PLACE ORDER
+// ═══════════════════════════════════════════════════════════
+async function placeOrder() {
+ if (cart.length === 0) { showToast('Add items to your cart first', 'info'); return; }
+ if (!validateOrderForm()) { showToast('Please fix the highlighted fields', 'error'); return; }
+
+ // Honeypot check (order page doesn't have one but future-proofed)
+ const btn = document.getElementById('place-order-btn');
+ const btnText = document.getElementById('place-order-text');
+ btn.disabled = true;
+ safeText(btnText, 'Placing…');
+
+ const payload = {
+ customer_name:  document.getElementById('order-name').value.trim(),
+ phone:    document.getElementById('order-phone').value.trim(),
+ address:    document.getElementById('order-address').value.trim(),
+ items:    cart.map(i => ({ name: i.name, price: i.price, qty: i.qty })),
+ special_instructions: document.getElementById('order-instructions').value.trim(),
+ };
+
+ try {
+ const res = await fetch(API_BASE + '/api/orders', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload),
+ });
+ const data = await res.json();
+ if (!res.ok) throw new Error(data.errors?.[0]?.msg || data.error || 'Order failed');
+
+ // Success
+ cart = [];
+ updateCartBadge();
+ renderCart();
+ // Clear form
+ ['order-name','order-phone','order-address'].forEach(id => { document.getElementById(id).value = ''; });
+ document.getElementById('order-instructions').value = '';
+ // Show confirm
+ document.getElementById('order-confirm').classList.remove('hidden');
+ if (data.order_id) {
+  safeText(document.getElementById('order-confirm-id'), 'Order #' + data.order_id.slice(-8).toUpperCase());
+ }
+ } catch (err) {
+ showToast(err.message || 'Something went wrong', 'error');
+ } finally {
+ btn.disabled = false;
+ safeText(btnText, 'Place Order');
+ }
+}
+
+function closeOrderConfirm() {
+ document.getElementById('order-confirm').classList.add('hidden');
+ navigate('home');
+}
+
+// ═══════════════════════════════════════════════════════════
+// RESERVATION
+// ═══════════════════════════════════════════════════════════
+async function submitReservation(e) {
+ e.preventDefault();
+ if (!validateResForm()) return;
+
+ // Honeypot
+ if (document.getElementById('res-honeypot').value) return;
+
+ const btn = document.getElementById('res-submit-btn');
+ btn.disabled = true;
+ safeText(btn, 'Reserving…');
+
+ const payload = {
+ first_name: document.getElementById('res-first').value.trim(),
+ last_name: document.getElementById('res-last').value.trim(),
+ email:  document.getElementById('res-email').value.trim(),
+ phone:  document.getElementById('res-phone').value.trim(),
+ date:  document.getElementById('res-date').value,
+ time:  document.getElementById('res-time').value,
+ guests:  parseInt(document.getElementById('res-guests').value),
+ occasion: document.getElementById('res-occasion').value,
+ honeypot: document.getElementById('res-honeypot').value,
+ };
+
+ try {
+ const res = await fetch(API_BASE + '/api/reservations', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload),
+ });
+ const data = await res.json();
+ if (!res.ok) throw new Error(data.errors?.[0]?.msg || data.error || 'Reservation failed');
+
+ document.getElementById('res-form').reset();
+ document.getElementById('res-confirm').classList.remove('hidden');
+ } catch (err) {
+ showToast(err.message || 'Something went wrong', 'error');
+ } finally {
+ btn.disabled = false;
+ safeText(btn, 'Reserve Table');
+ }
+}
+
+// ═══════════════════════════════════════════════════════════
+// CONTACT
+// ═══════════════════════════════════════════════════════════
+async function submitContact(e) {
+ e.preventDefault();
+ if (!validateContactForm()) return;
+
+ // Honeypot
+ if (document.getElementById('contact-honeypot').value) return;
+
+ const btn = document.getElementById('contact-submit-btn');
+ btn.disabled = true;
+ safeText(btn, 'Sending…');
+
+ const payload = {
+ name:  document.getElementById('contact-name').value.trim(),
+ email: document.getElementById('contact-email').value.trim(),
+ subject: document.getElementById('contact-subject').value,
+ message: document.getElementById('contact-message').value.trim(),
+ honeypot: document.getElementById('contact-honeypot').value,
+ };
+
+ try {
+ const res = await fetch(API_BASE + '/api/contact', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload),
+ });
+ const data = await res.json();
+ if (!res.ok) throw new Error(data.errors?.[0]?.msg || data.error || 'Send failed');
+
+ document.getElementById('contact-form').reset();
+ document.getElementById('contact-confirm').classList.remove('hidden');
+ } catch (err) {
+ showToast(err.message || 'Something went wrong', 'error');
+ } finally {
+ btn.disabled = false;
+ safeText(btn, 'Send Message');
+ }
+}
+
+// ═══════════════════════════════════════════════════════════
+// MENU TABS & SEARCH
+// ═══════════════════════════════════════════════════════════
+function setTab(cat) {
+ document.querySelectorAll('.tab-btn').forEach(b => {
+ if (b.dataset.tab === cat) {
+  b.classList.add('active');
+  b.classList.remove('bg-surface-container-high','text-on-secondary-container');
+ } else {
+  b.classList.remove('active');
+  b.classList.add('bg-surface-container-high','text-on-secondary-container');
+ }
+ });
+ document.querySelectorAll('.menu-item').forEach(item => {
+ item.style.display = item.dataset.cat === cat ? 'block' : 'none';
+ });
+ document.getElementById('menu-search').value = '';
+}
+
+function filterMenu() {
+ const q = document.getElementById('menu-search').value.toLowerCase();
+ const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab;
+ let count = 0;
+ document.querySelectorAll('.menu-item').forEach(item => {
+ const itemName = item.dataset.name || '';
+ const itemCat = item.dataset.cat || '';
+ const nameMatch = itemName.toLowerCase().includes(q);
+ const catMatch = !activeTab || itemCat === activeTab;
+ const show = nameMatch && (q ? true : catMatch);
+ item.style.display = show ? 'block' : 'none';
+ if (show) count++;
+ });
+ document.getElementById('menu-no-results').classList.toggle('hidden', count > 0);
+}
+
+// ═══════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type = 'success') {
+ const t = document.getElementById('toast');
+ const icon = document.getElementById('toast-icon');
+ safeText(document.getElementById('toast-msg'), msg);
+ icon.textContent = type === 'error' ? 'error' : type === 'info' ? 'info' : 'check_circle';
+ t.style.opacity = '1';
+ t.style.transform = 'translateY(0)';
+ clearTimeout(toastTimer);
+ toastTimer = setTimeout(() => {
+ t.style.opacity = '0';
+ t.style.transform = 'translateY(8px)';
+ }, 3000);
+}
+
+// ═══════════════════════════════════════════════════════════
+// ADMIN — LOGIN / LOGOUT
+// ═══════════════════════════════════════════════════════════
+function navigateAdmin() {
+ navigate('admin');
+ // Show login or dashboard based on token
+ if (adminToken) {
+ showAdminDashboard();
+ }
+}
+
+async function adminLogin() {
+ const email = document.getElementById('admin-email-input').value.trim();
+ const password = document.getElementById('admin-pass-input').value;
+ const errEl = document.getElementById('admin-login-error');
+ const btn  = document.getElementById('admin-login-btn');
+
+ errEl.classList.add('hidden');
+ if (!email || !password) { safeText(errEl, 'Please enter email and password.'); errEl.classList.remove('hidden'); return; }
+
+ btn.disabled = true;
+ safeText(btn, 'Signing in…');
+
+ try {
+ const res = await fetch(API_BASE + '/api/admin/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password }),
+ });
+ const data = await res.json();
+ if (!res.ok) throw new Error(data.error || 'Login failed');
+
+ adminToken = data.token;
+ // Store token in memory only (no localStorage for XSS safety)
+ document.getElementById('admin-pass-input').value = '';
+ showAdminDashboard();
+ } catch (err) {
+ safeText(errEl, err.message);
+ errEl.classList.remove('hidden');
+ } finally {
+ btn.disabled = false;
+ safeText(btn, 'Sign In');
+ }
+}
+
+function adminLogout() {
+ adminToken = null;
+ document.getElementById('admin-dashboard').classList.add('hidden');
+ document.getElementById('admin-login-screen').classList.remove('hidden');
+}
+
+async function showAdminDashboard() {
+ document.getElementById('admin-login-screen').classList.add('hidden');
+ document.getElementById('admin-dashboard').classList.remove('hidden');
+ setAdminTab('orders');
+ await loadAdminData();
+}
+
+// ═══════════════════════════════════════════════════════════
+// ADMIN — DATA LOADING
+// ═══════════════════════════════════════════════════════════
+async function adminFetch(path) {
+ const res = await fetch(API_BASE + path, {
+ headers: { 'Authorization': 'Bearer ' + adminToken },
+ });
+ if (res.status === 401) { adminLogout(); throw new Error('Session expired. Please sign in again.'); }
+ if (!res.ok) throw new Error('Request failed');
+ return res.json();
+}
+
+async function loadAdminData() {
+ try {
+ const [orders, reservations, messages] = await Promise.all([
+  adminFetch('/api/admin/orders'),
+  adminFetch('/api/admin/reservations'),
+  adminFetch('/api/admin/messages'),
+ ]);
+
+ // Stats
+ safeText(document.getElementById('stat-orders'), orders.total || orders.data.length);
+ safeText(document.getElementById('stat-pending'), orders.data.filter(o => o.status === 'pending').length);
+ safeText(document.getElementById('stat-reservations'), reservations.data.length);
+ safeText(document.getElementById('stat-messages'), messages.data.filter(m => !m.read).length);
+
+ // Render tables
+ renderOrdersTable(orders.data);
+ renderReservationsTable(reservations.data);
+ renderMessagesTab(messages.data);
+ attachAdminEventListeners();
+ } catch (err) {
+ showToast(err.message || 'Failed to load data', 'error');
+ }
+}
+
+function renderOrdersTable(orders) {
+ const tbody = document.getElementById('admin-orders-body');
+ if (!orders.length) {
+ tbody.innerHTML = '<tr><td colspan="7" class="text-center py-10 text-secondary opacity-40 font-label text-sm">No orders yet.</td></tr>';
+ return;
+ }
+ tbody.innerHTML = '';
+ orders.forEach(o => {
+ const tr = document.createElement('tr');
+ tr.className = 'border-b border-outline-variant/10 hover:bg-surface-container-high/50 transition-colors';
+
+ const statusOptions = ['pending','preparing','ready','delivered','cancelled']
+  .map(s => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`)
+  .join('');
+
+ tr.innerHTML = `
+  <td class="p-4 font-label text-xs text-secondary">#${escHtml(o.id.slice(-6).toUpperCase())}</td>
+  <td class="p-4 font-label text-sm">${escHtml(o.customer_name)}</td>
+  <td class="p-4 font-label text-xs text-secondary">${escHtml(o.phone)}</td>
+  <td class="p-4 font-label font-semibold text-sm">₹${escHtml(String(Math.round(o.total_amount)))}</td>
+  <td class="p-4"><span class="status-badge status-${escHtml(o.status)}">${escHtml(o.status)}</span></td>
+  <td class="p-4 font-label text-xs text-secondary">${escHtml(new Date(o.created_at).toLocaleDateString('en-IN'))}</td>
+  <td class="p-4">
+  <select data-order-status-select data-order-id="${escHtml(o.id)}" class="bg-surface border-none rounded-lg px-3 py-1.5 text-xs font-label hearth-input cursor-pointer">
+   ${statusOptions}
+  </select>
+  </td>`;
+ tbody.appendChild(tr);
+ });
+}
+
+function renderReservationsTable(reservations) {
+ const tbody = document.getElementById('admin-res-body');
+ if (!reservations.length) {
+ tbody.innerHTML = '<tr><td colspan="6" class="text-center py-10 text-secondary opacity-40 font-label text-sm">No reservations yet.</td></tr>';
+ return;
+ }
+ tbody.innerHTML = '';
+ reservations.forEach(r => {
+ const tr = document.createElement('tr');
+ tr.className = 'border-b border-outline-variant/10 hover:bg-surface-container-high/50 transition-colors';
+ tr.innerHTML = `
+  <td class="p-4 font-label text-sm">${escHtml(r.first_name + ' ' + r.last_name)}</td>
+  <td class="p-4 font-label text-xs text-secondary">${escHtml(r.email)}</td>
+  <td class="p-4 font-label text-xs text-secondary">${escHtml(r.phone)}</td>
+  <td class="p-4 font-label text-xs">${escHtml(r.date)} ${escHtml(r.time)}</td>
+  <td class="p-4 font-label text-sm">${escHtml(String(r.guests))}</td>
+  <td class="p-4"><span class="status-badge status-${escHtml(r.status)}">${escHtml(r.status)}</span></td>`;
+ tbody.appendChild(tr);
+ });
+}
+
+function renderMessagesTab(messages) {
+ const list = document.getElementById('admin-messages-list');
+ if (!messages.length) {
+ list.innerHTML = '<p class="text-center py-10 text-secondary opacity-40 font-label text-sm">No messages yet.</p>';
+ return;
+ }
+ list.innerHTML = '';
+ messages.forEach(m => {
+ const card = document.createElement('div');
+ card.className = `bg-surface-container-low rounded-2xl p-6 soft-shadow ${m.read ? 'opacity-60' : ''}`;
+
+ const header = document.createElement('div');
+ header.className = 'flex justify-between items-start mb-3';
+
+ const leftInfo = document.createElement('div');
+ const nameEl = document.createElement('p');
+ nameEl.className = 'font-label font-semibold text-sm text-on-surface';
+ nameEl.textContent = m.name;
+ const emailEl = document.createElement('p');
+ emailEl.className = 'font-label text-xs text-secondary opacity-70';
+ emailEl.textContent = m.email;
+ leftInfo.append(nameEl, emailEl);
+
+ const rightInfo = document.createElement('div');
+ rightInfo.className = 'text-right';
+ const subEl = document.createElement('span');
+ subEl.className = 'text-xs font-label text-secondary bg-surface-container px-3 py-1 rounded-full';
+ subEl.textContent = m.subject;
+ const dateEl = document.createElement('p');
+ dateEl.className = 'font-label text-xs text-secondary opacity-50 mt-1';
+ dateEl.textContent = new Date(m.created_at).toLocaleDateString('en-IN');
+ rightInfo.append(subEl, dateEl);
+
+ header.append(leftInfo, rightInfo);
+
+ const msgEl = document.createElement('p');
+ msgEl.className = 'text-sm text-on-surface-variant leading-relaxed mb-4';
+ msgEl.textContent = m.message;
+
+ card.append(header, msgEl);
+
+ if (!m.read) {
+  const markBtn = document.createElement('button');
+  markBtn.className = 'text-xs font-label text-secondary hover:text-primary transition-colors flex items-center gap-1';
+  markBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px">mark_email_read</span>';
+  markBtn.appendChild(document.createTextNode(' Mark as read'));
+  markBtn.onclick = () => markMessageRead(m.id, card);
+  card.appendChild(markBtn);
+ }
+
+ list.appendChild(card);
+ });
+}
+
+async function updateOrderStatus(id, status) {
+ try {
+ const res = await fetch(API_BASE + '/api/admin/orders/' + id, {
+  method: 'PATCH',
+  headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+  body: JSON.stringify({ status }),
+ });
+ if (!res.ok) throw new Error('Update failed');
+ showToast('Order status updated', 'check_circle');
+ await loadAdminData();
+ } catch (err) {
+ showToast(err.message, 'error');
+ }
+}
+
+async function markMessageRead(id, card) {
+ try {
+ await fetch(API_BASE + '/api/admin/messages/' + id + '/read', {
+  method: 'PATCH',
+  headers: { 'Authorization': 'Bearer ' + adminToken },
+ });
+ card.classList.add('opacity-60');
+ const btn = card.querySelector('button');
+ if (btn) btn.remove();
+ // Update stat
+ const statEl = document.getElementById('stat-messages');
+ const cur = parseInt(statEl.textContent) || 0;
+ safeText(statEl, Math.max(0, cur - 1));
+ } catch {
+ showToast('Failed to mark as read', 'error');
+ }
+}
+
+function setAdminTab(tab) {
+ currentAdminTab = tab;
+ ['orders','reservations','messages'].forEach(t => {
+ const panel = document.getElementById('admin-' + t + '-tab');
+ if (panel) panel.classList.toggle('hidden', t !== tab);
+ });
+ document.querySelectorAll('.admin-tab').forEach(btn => {
+ const isActive = btn.textContent.toLowerCase().includes(tab.slice(0,3));
+ btn.classList.toggle('active', isActive);
+ });
+}
+
+// ═══════════════════════════════════════════════════════════
+// KEYBOARD SHORTCUT: Ctrl+Shift+A → Admin
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('keydown', e => {
+ if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+ navigate('admin');
+ }
+});
+</script>
+<script src="script.js"></script>
+</body>
+</html>

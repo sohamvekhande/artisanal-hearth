@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: artisanal-hearth
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: JWT_SECRET
+        generateValue: true          # Render auto-generates a secure random value
+      - key: SUPABASE_URL
+        sync: false                  # Set manually in Render dashboard
+      - key: SUPABASE_SERVICE_KEY
+        sync: false                  # Set manually in Render dashboard
+      - key: ADMIN_EMAIL
+        sync: false                  # e.g. admin@artisanalhearth.in
+      - key: ADMIN_PASS_HASH
+        sync: false                  # bcrypt hash — generate with: node -e "const b=require('bcryptjs');b.hash('yourpassword',12).then(console.log)"
+      - key: ALLOWED_ORIGINS
+        sync: false                  # e.g. https://artisanal-hearth.onrender.com
+    autoDeploy: true
