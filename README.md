@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # The Artisanal Hearth — Full-Stack Deployment Guide
 
 ## Stack
@@ -88,3 +89,6 @@ npm install
 npm run dev
 # Visit http://localhost:3000
 ```
+=======
+# artisanal-hearth
+>>>>>>> de5048b815214c99a81d271b9804806c89794d78
