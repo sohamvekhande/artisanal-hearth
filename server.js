@@ -317,7 +317,7 @@ app.post('/api/admin/login', [
   }
 
   // If no hash is set in env (first setup), use default 'admin123' for dev only
-  const hashToCheck = ADMIN_PASS_HASH || '$2a$12$oSnYmb3EBEpJFG6M78o7Ou5JlC7IYpTQ1u9LHpyKGMT8CvMb4fmMa';
+  const hashToCheck = ADMIN_PASS_HASH || '$2a$12$wepzBRg.0Y54X9eA7KUKGLef7bgHGqw7KL6I.2StFl5UMZ64NEU/ai';
   const valid = await bcrypt.compare(password, hashToCheck);
 
   if (!valid) {
