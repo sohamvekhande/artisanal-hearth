@@ -1,3 +1,23 @@
+// Global cart
+window.cart = [];
+
+// Add to cart function
+function addToCart(name, price) {
+  const existingItem = window.cart.find(item => item.name === name);
+
+  if (existingItem) {
+    existingItem.qty += 1;
+  } else {
+    window.cart.push({
+      name,
+      price,
+      qty: 1
+    });
+  }
+
+  console.log("Cart:", window.cart);
+}
+
 function initAppBindings() {
   // Main action buttons
   const orderBtn = document.getElementById("orderBtn");
@@ -118,4 +138,54 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initAppBindings);
 } else {
   initAppBindings();
+}
+
+async function placeOrder() {
+  const name = document.getElementById("order-name").value.trim();
+  const phone = document.getElementById("order-phone").value.trim();
+  const address = document.getElementById("order-address").value.trim();
+
+  // Basic validation
+  if (!name || !phone || !address) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  // Get cart (assuming you stored it)
+  const cart = window.cart || [];
+
+  if (cart.length === 0) {
+    alert("Cart is empty");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        customer_name: name,
+        phone,
+        address,
+        items: cart
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Order failed");
+    }
+
+    // Show success modal
+    document.getElementById("order-confirm").classList.remove("hidden");
+
+    // Clear cart
+    window.cart = [];
+  } catch (err) {
+    console.error(err);
+    alert("Order failed: " + err.message);
+  }
 }
