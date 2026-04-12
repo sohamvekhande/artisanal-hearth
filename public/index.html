@@ -5,6 +5,9 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>The Artisanal Hearth</title>
 <link href="output.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..800;1,6..72,300..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
 <style>
  * { box-sizing:border-box; }
@@ -1100,7 +1103,11 @@ function renderCart() {
  const icon = document.createElement('div');
  icon.className = 'w-16 h-16 bg-surface-container-high rounded-xl overflow-hidden flex-shrink-0';
  const imgSrc = itemImages[item.name] || 'assets/hearth_smoked_latte.jpg'; // fallback image
- icon.innerHTML = `<img src="${imgSrc}" alt="${item.name}" class="w-full h-full object-cover">`;
+ const imgEl = document.createElement('img');
+ imgEl.src = imgSrc;
+ imgEl.alt = item.name;
+ imgEl.className = 'w-full h-full object-cover';
+ icon.appendChild(imgEl);
 
  const info = document.createElement('div');
  info.className = 'flex-grow';
@@ -1638,6 +1645,14 @@ function renderMessagesTab(messages) {
  }
 
  list.appendChild(card);
+ });
+}
+
+function attachAdminEventListeners() {
+ document.querySelectorAll('[data-order-status-select]').forEach(sel => {
+  sel.addEventListener('change', () => {
+   updateOrderStatus(sel.dataset.orderId, sel.value);
+  });
  });
 }
 
