@@ -982,6 +982,43 @@ let adminToken = null;
 let currentAdminTab = 'orders';
 
 // ═══════════════════════════════════════════════════════════
+// ADMIN SESSION — sessionStorage (cleared on browser close)
+// ═══════════════════════════════════════════════════════════
+const SESSION_TIMEOUT = 60 * 60 * 1000; // 60 minutes in ms
+let _inactivityTimer;
+
+function saveAdminSession(token) {
+ sessionStorage.setItem('admin_token', token);
+ sessionStorage.setItem('admin_last_activity', Date.now());
+}
+
+function clearAdminSession() {
+ sessionStorage.removeItem('admin_token');
+ sessionStorage.removeItem('admin_last_activity');
+}
+
+function touchActivity() {
+ if (adminToken) sessionStorage.setItem('admin_last_activity', Date.now());
+}
+
+function startInactivityWatch() {
+ clearInterval(_inactivityTimer);
+ _inactivityTimer = setInterval(() => {
+  if (!adminToken) return;
+  const last = parseInt(sessionStorage.getItem('admin_last_activity') || '0');
+  if (Date.now() - last > SESSION_TIMEOUT) {
+  adminLogout();
+  showToast('Signed out due to inactivity', 'info');
+  }
+ }, 60 * 1000); // check every minute
+}
+
+// Track any user interaction to reset inactivity clock
+['click', 'keydown', 'mousemove', 'scroll', 'touchstart'].forEach(evt =>
+ document.addEventListener(evt, touchActivity, { passive: true })
+);
+
+// ═══════════════════════════════════════════════════════════
 // LOADER
 // ═══════════════════════════════════════════════════════════
 window.addEventListener('load', () => {
@@ -994,6 +1031,14 @@ window.addEventListener('load', () => {
  const dd = String(today.getDate()).padStart(2, '0');
  dateInput.min = `${yyyy}-${mm}-${dd}`;
  }
+ // Restore admin session from sessionStorage if still within timeout
+ const _storedToken = sessionStorage.getItem('admin_token');
+ const _lastActivity = parseInt(sessionStorage.getItem('admin_last_activity') || '0');
+ if (_storedToken && (Date.now() - _lastActivity < SESSION_TIMEOUT)) {
+  adminToken = _storedToken;
+ }
+ startInactivityWatch();
+
  setTimeout(() => {
  document.getElementById('loader').classList.add('fade-out');
  const validPages = ['home', 'menu', 'order', 'reservation', 'about', 'contact', 'admin'];
@@ -1022,6 +1067,7 @@ function navigate(page) {
  setTimeout(initReveal, 100);
  if (page === 'order') renderCart();
  if (page === 'menu') setTab('coffee');
+ if (page === 'admin' && adminToken) showAdminDashboard();
 }
 
 // Restore page on browser back/forward
@@ -1494,7 +1540,7 @@ async function adminLogin() {
  if (!res.ok) throw new Error(data.error || 'Login failed');
 
  adminToken = data.token;
- // Store token in memory only (no localStorage for XSS safety)
+ saveAdminSession(adminToken); // persist across refresh, cleared on browser close
  document.getElementById('admin-pass-input').value = '';
  showAdminDashboard();
  } catch (err) {
@@ -1508,6 +1554,7 @@ async function adminLogin() {
 
 function adminLogout() {
  adminToken = null;
+ clearAdminSession();
  document.getElementById('admin-dashboard').classList.add('hidden');
  document.getElementById('admin-login-screen').classList.remove('hidden');
 }
