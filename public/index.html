@@ -996,7 +996,9 @@ window.addEventListener('load', () => {
  }
  setTimeout(() => {
  document.getElementById('loader').classList.add('fade-out');
- navigate('home');
+ const validPages = ['home', 'menu', 'order', 'reservation', 'about', 'contact', 'admin'];
+ const initialPage = window.location.hash.replace('#', '') || 'home';
+ navigate(validPages.includes(initialPage) ? initialPage : 'home');
  initReveal();
  }, 1000);
 });
@@ -1012,11 +1014,22 @@ function navigate(page) {
  const link = document.querySelector('[data-page="' + page + '"]');
  if (link) link.classList.add('active');
  currentPage = page;
+ // Sync URL hash without re-triggering hashchange
+ if (window.location.hash !== '#' + page) {
+  history.pushState(null, '', '#' + page);
+ }
  window.scrollTo({ top: 0, behavior: 'smooth' });
  setTimeout(initReveal, 100);
  if (page === 'order') renderCart();
  if (page === 'menu') setTab('coffee');
 }
+
+// Restore page on browser back/forward
+window.addEventListener('hashchange', () => {
+ const validPages = ['home', 'menu', 'order', 'reservation', 'about', 'contact', 'admin'];
+ const page = window.location.hash.replace('#', '') || 'home';
+ navigate(validPages.includes(page) ? page : 'home');
+});
 
 // ═══════════════════════════════════════════════════════════
 // MOBILE MENU

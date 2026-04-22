@@ -220,7 +220,9 @@ app.post('/api/reservations', [
     .isISO8601().withMessage('Invalid date format.')
     .custom(v => {
       const d = new Date(v);
-      if (d < new Date()) throw new Error('Reservation date must be in the future.');
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // strip time — compare date only
+      if (d < today) throw new Error('Reservation date must be in the future.');
       return true;
     }),
   body('time')
